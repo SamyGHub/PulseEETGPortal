@@ -1,0 +1,6 @@
+<app-header *ngIf="generalServices.loggeduser"></app-header>
+<app-nav *ngIf="generalServices.loggeduser" appendTo="body"></app-nav>
+<!-- <app-operations *ngIf ="generalServices.SalesContract.length!=0"></app-operations> -->
+<router-outlet></router-outlet>
+
+<app-footer></app-footer>

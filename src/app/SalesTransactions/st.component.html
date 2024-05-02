@@ -1,0 +1,130 @@
+<div class="grid" >
+        <div class="col-10 col-offset-1"><app-groups></app-groups></div>
+        <div class="col-10 col-offset-1" *ngIf="!TData.length">
+            <p-card header="Import Sales Transacions" >
+                <p>ERP Sales Transactions Import -- Excel Sheet Upload</p>
+                    <!-- <div class="field col-12 md:col-4">
+                        <label for="basic">Select Contracts Date</label>
+                        <p-calendar inputId="basic" [(ngModel)]="Fdlvdt"></p-calendar>
+                    </div> -->
+                    <p-fileUpload name="demo[]" (onSelect)="csv2Array($event)"
+                        [multiple]="true" accept="text/*" [maxFileSize]="6000000">
+                        <ng-template pTemplate="content">
+                            <ul *ngIf="uploadedFiles.length">
+                                <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                            </ul>
+                        </ng-template>
+                    </p-fileUpload>
+            </p-card>
+        </div>
+      <!-- <p class="lead"></p> -->
+        <div class="col-10 col-offset-1" *ngIf="TData.length">
+            <p-toolbar styleClass="mb-2">
+                <ng-template pTemplate="left">
+                    <!-- <button pButton pRipple label="Process Selected Contracts" icon="pi pi-plus" (click)="processSalesTransaction()" class="p-button-success mr-2" ></button>
+                    <button pButton pRipple label="Confirm Process" icon="pi pi-plus" (click)="Assign()" class="p-button-success mr-2" ></button> -->
+                    <button pButton pRipple label="Clear Data" icon="pi pi-trash" (click)="Clear()" class="p-button-danger"></button>
+                </ng-template>
+            </p-toolbar>
+        <p-dialog  header="Processing Details" [(visible)]="viewme" [style]="{width: '70vw'}">
+            <p-table #prodt [value]="mymessages" 
+              [tableStyle]="{'min-width': '50rem'}" styleClass="p-datatable-gridlines">
+              <ng-template pTemplate="body" let-rowData>
+                <tr>
+                  <td>{{rowData}}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-dialog>
+        <p-table #dt 
+        [columns]="cols" 
+        [value]="TData" 
+        dataKey="id" 
+        sortField="Itemnumber" 
+        sortMode="single" 
+        [rowsPerPageOptions]="[10, 25, 50]" 
+        [rows]="25" 
+        [paginator]="true"
+        [(selection)]="selectedContracts" 
+        rowGroupMode="subheader" 
+        groupRowsBy="Contractnumber"
+        [tableStyle]="{'min-width': '50rem'}" 
+        styleClass="p-datatable-gridlines" 
+        [globalFilterFields]="cols"
+        [scrollable]="true"
+            scrollHeight="1000px"
+            frozenWidth="200px"
+            responsiveLayout="scroll">
+
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h5 class="m-1">Manage Sales Transactions</h5>
+                <span class="p-input-icon-right">
+                    <i class="pi pi-search"></i>
+                    <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                </span>
+            </div>
+        </ng-template>
+        
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <!-- <th style="width: 3rem">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th> -->
+                    <th>Contract Date</th>
+                    <th>Contract Number</th>
+                    <th>Customer</th>
+                    <th>Contract Quantity</th>
+                    <th>Shipped Quantity</th>
+                    <th>Number Of Bags</th>
+                    <th>Price</th>
+                    <th>Invoice Amount</th>
+                    <th>Invoice</th>
+                    <th>Delivery From Date</th>
+                    <th>Delivery To Date</th>
+                    <th>Discharge Port</th>
+                    <th>Shipment Period</th>               
+                </tr>
+            </ng-template>
+                <ng-template pTemplate="groupheader" let-rowData>
+                    <tr pRowGroupHeader>
+                        <td colspan="14">
+                            <span class="font-bold ml-2">{{rowData.Contractnumber}}</span>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <!-- <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td> -->
+                        <td>{{rowData.Contractdate | date}}</td>
+                        <td>{{rowData.Contractnumber}}</td>
+                        <td>{{rowData.Name2}}</td>
+                        <td>{{rowData.Contractquantity}}</td>
+                        <td>{{rowData.Shippedquantity}}</td>
+                        <td>{{rowData.Numberofbags}}</td>
+                        <td>{{rowData.Price}}</td>
+                        <td>{{rowData.Invoiceamount}}</td>
+                        <td>{{rowData.Invoice}}</td>
+                        <td>{{rowData.Deliveryfromdate | date}}</td>
+                        <td>{{rowData.Deliverytodate | date}}</td>
+                        <td>{{rowData.Portofdischarge}}</td>
+                        <td>{{rowData.Shipmentperiod}}</td>          
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{TData ? TData.length : 0 }} Transactions.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+  <p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+    </p-blockUI>
+    <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+    <p-messages [enableService]="true"></p-messages>

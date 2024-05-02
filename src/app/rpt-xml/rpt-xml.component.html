@@ -1,0 +1,109 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <!-- <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="Add" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                    <button pButton pRipple label="Update" icon="pi pi-file-edit" class="p-button-secondary mr-2" (click)="UpdateAcc()"></button>
+                </ng-template>
+            </p-toolbar> -->
+            <p-table #dt 
+            [columns]="cols" 
+            [value]="rows" 
+            sortField="Contractnumber" 
+            sortMode="single" 
+            [rows]="15" 
+            [paginator]="true"
+                rowGroupMode="subheader" 
+                groupRowsBy="Contractnumber" 
+                [scrollable]="true" 
+                [(selection)]="selectedSplit"
+                [tableStyle]="{'min-width': '50rem'}" 
+                scrollHeight="2000px" 
+                styleClass="p-datatable-gridlines"
+                [globalFilterFields]= "cols">
+                
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                        <h2 class="m-0 text-blue-800">XML Report Screen</h2>                        
+                        <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                       
+                        <th>Canadian Port of Exit</th>
+                        <th>Country of Final Destination</th>
+                        <th>HS (8) Code</th>
+                        <th>DESCRIPTION OF GOODS</th>
+                        <th>Quantity</th>
+                        <th>UOM</th>
+                        <th>Domestic Freight Charges</th>
+                        <th>FOB</th>
+                        <th>Currency</th>
+                        <th>Country of Origin</th>
+                        <th>Province of Origin</th>
+                        <th>Gross Weight</th>
+                        <th>UOM</th>
+                        <th>Mode Of Transport</th>
+                        <th>Vessel Name</th>
+                        <th>Related Party Indicator (Y/N)</th>
+                        <th>Permit Number (if required)</th>
+                        <th>Containerized yes\no</th>
+                       
+                        <th>Documentation Cuttoff Date</th>
+                        <th>Split Number</th>
+                        <th> 
+                            <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+                        </th>
+                    </tr>
+                </ng-template>
+              
+                <ng-template pTemplate="body" let-columns="columns" let-rowData let-rowIndex="rowIndex">
+                <tr>
+                    <td>{{rowData.PortCode}}</td>
+                    <td>{{rowData.Code}}</td>
+                    <td>{{rowData.HSCODEXML}}</td>
+                    <td>{{rowData.Commodity}}</td>
+                    <td>{{rowData.ShippedQTY}}</td>
+                    <td>{{rowData.UOM}}</td>
+                    <td>{{rowData.FreightValue}}</td>
+                    <td>{{rowData.FOB}}</td>
+                    <td>{{rowData.CurrencyName}}</td>
+                    <td>{{rowData.OriginCode}}</td>
+                    <td>{{rowData.ProvOrigin}}</td>
+                    <td>{{rowData.ShippedQTYTN}}</td>
+                    <td>{{rowData.UOMTN}}</td>    
+                    <td>{{rowData.MOT}}</td>
+                    <td>{{rowData.VesselName}}</td>
+                    <td>{{rowData.RPI}}</td>
+                    <td>{{rowData.permit}}</td>
+                    <td>{{rowData.Containerized}}</td>
+                    
+                    <td>{{rowData.DoxCutoff | date}}</td>
+                    <td>{{rowData.SplitNo}}</td>
+                    <td></td>
+                </tr>                
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{rows ? rows.length : 0 }} Contracts.
+                    </div>
+                </ng-template>
+            </p-table>            
+        </div>
+    </div>
+</div>
+
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+    <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+    <p-messages [enableService]="true"></p-messages>
+    <p-toast key="toast01" position="top-right"></p-toast>

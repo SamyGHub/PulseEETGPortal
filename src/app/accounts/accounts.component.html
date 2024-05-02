@@ -1,0 +1,138 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <!-- <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="Add" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                    <button pButton pRipple label="Update" icon="pi pi-file-edit" class="p-button-secondary mr-2" (click)="UpdateAcc()"></button>
+                </ng-template>
+            </p-toolbar> -->
+            <p-table #dt 
+            [columns]="cols" 
+            [value]="rows" 
+            sortField="Contractnumber" 
+            sortMode="single" 
+            [rows]="15" 
+            [paginator]="true"
+                rowGroupMode="subheader" 
+                groupRowsBy="Name" 
+                [(selection)]="selectedSplit"
+                [tableStyle]="{'min-width': '50rem'}" 
+                [scrollable]="true"
+                scrollHeight="1000px"
+                frozenWidth="200px"
+                responsiveLayout="scroll"
+                styleClass="p-datatable-gridlines" 
+                [globalFilterFields]= "cols">
+
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                        <h2 class="m-0 text-blue-800">Accounting Contracts Screen</h2>                        
+                        <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        
+                        <th>Contractdate</th>
+                        <th>SplitNo</th>
+                        <th>CustName</th>
+                        <th>Quantity</th>
+                        <th>Mapped QTY</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                        <th>Delivery from date</th>
+                        <th>Delivery to date</th>
+                        <th>BookingRef</th>
+                        <th>Destination</th>
+                        <th>FCLNum</th>
+                        <th>Freight Rate</th>
+                        <th>Freight Value</th>
+                        <th>Invoice</th>
+                        <th>Invoice date</th>
+                        <th>Invoice amount</th>
+                        <th>Payment received</th>
+                        <th>Payment date</th>
+                        <th>Delivery terms</th>
+                        <th>PortName</th>
+                        <th>BL No</th>
+                        <th>BL Date</th>
+                        <th>Logistics Comments</th>
+                        <th>Documentation Comments</th>
+                        <th>ETS Date</th>
+                        <th>ETA Date</th>
+                        <th>ETG Ref. Bank</th>
+                        <th>Action</th>
+
+                        <th> 
+                            <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="groupheader" let-rowData>
+                    <tr pRowGroupHeader>
+                        <td colspan="27" >
+                            <!-- <img [alt]="rowdata.image" [src]="rowdata.commodityimg" width="32" style="vertical-align: middle" /> | -->
+                            <span class="font-bold ml-2">{{rowData.Name}}</span> |
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-columns="columns" let-rowData let-rowIndex="rowIndex">
+                <tr>
+                   
+                    <td>{{rowData.Contractdate | date:"MMM dd"}}</td>
+                    <td>{{rowData.SplitNo}}</td>
+                    <td>{{rowData.CustName}}</td>
+                    <td>{{rowData.Quantity | number:'1.1-3'}}</td>
+                    <td>{{rowData.QTYPlanned | number:'1.1-3'}}</td>
+                    <td>{{rowData.Price | number:'1.1-2'}}</td>
+                    <td>{{rowData.Amount | number:'1.1-2'}}</td>
+                    <td>{{rowData.Deliveryfromdate | date:"MMM dd"}}</td>
+                    <td>{{rowData.Deliverytodate | date:"MMM dd"}}</td>
+                    <td>{{rowData.BookingRef}}</td>
+                    <td>{{rowData.Destination}}</td>
+                    <td>{{rowData.FCLNum}}</td>
+                    <td>{{rowData.FreightValue | number:'1.1-2'}}</td>
+                    <td>{{rowData.Freight | number:'1.1-2'}}</td>
+                    <td>{{rowData.invoice}}</td>
+                    <td>{{rowData.Invoicedate | date}}</td>
+                    <td>{{rowData.Invoiceamount | number:'1.1-2'}}</td>
+                    <td>{{rowData.Paymentreceivedamount | number:'1.1-2'}}</td>
+                    <td>{{rowData.Paymentdate | date}}</td>
+                    <td>{{rowData.Deliveryterms}}</td>
+                    <td>{{rowData.PortName}}</td>
+                    <td>{{rowData.BLNo}}</td>
+                    <td>{{rowData.BLDate | date}}</td>
+                    <td>{{rowData.LogisticsComments}}</td>
+                    <td>{{rowData.DoxComments}}</td>
+                    <td>{{rowData.ETS | date}}</td>
+                    <td>{{rowData.ETA | date}}</td>
+                    <td>{{rowData.ETGBank}}</td>
+                    <td>
+                        <button [routerLink]="['/app-accdetails']" [queryParams]="{rowData:mywindow.btoa(myjson.stringify(rowData))}" pButton pRipple type="button" icon="pi pi-external-link" class="p-button-rounded"></button>
+                    </td>
+                    <td></td>
+                </tr>                
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{rows ? rows.length : 0 }} Contracts.
+                    </div>
+                </ng-template>
+            </p-table>            
+        </div>
+    </div>
+</div>
+
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+    <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+    <p-messages [enableService]="true"></p-messages>
+    <p-toast key="toast01" position="top-right"></p-toast>

@@ -1,0 +1,176 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-dialog header="Network Issue" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+            [draggable]="false" [resizable]="false">
+            <p class="flex align-items-center justify-content-between">{{dialougmessage}}</p>
+            <ng-template pTemplate="footer">
+                <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+            </ng-template>
+         </p-dialog>   
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedRoles()" [disabled]="!selectedRoles || !selectedRoles.length"></button>
+                </ng-template>
+            </p-toolbar>
+        
+            <p-table #dt [columns]="cols" [rowsPerPageOptions]="[10, 25, 50]" [value]="rows" [rows]="10" [paginator]="true" [globalFilterFields]= "cols" responsiveLayout="scroll"
+                [(selection)]="selectedRoles" [rowHover]="true" dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <h5 class="m-0">Manage Roles</h5>
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th *ngFor="let col of columns" pSortableColumn={{col}} [pSortableColumnDisabled]="col === 'Botanical' || col === 'Levy' || col==='image'">
+                            {{col}} <p-sortIcon *ngIf="col !== 'id' && col !== 'Botanical' && col !== 'Levy' && col!=='image'" field={{col}} ariaLabel="Activate to sort"
+                            ariaLabelDesc="Activate to sort in descending order"
+                            ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <td *ngFor="let col of columns">
+                           <div *ngIf="col!=='image'">{{rowData[col]}}</div>
+                           <div><img *ngIf="col ==='image'" [src]="'assets/img/' + rowData.image" [alt]="rowData.Name" width="100" class="shadow-4" /></div>
+                        </td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editRole(rowData)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedRole(rowData)"></button>
+                        </td>
+                        <td></td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{Roles ? Roles.length : 0 }} Roles.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        
+        <p-dialog [(visible)]="addNewDialogue" [style]="{width: '1000px'}" header="Role Details" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content">
+                
+                    <div class="grid">
+                        <!-- <p-fieldset legend="Basic Information" [toggleable]="true" [collapsed]="false"> -->
+                        <div class="field col-2">
+                            <label for="RoleID">ID</label>
+                            <input type="text" pInputText id="RoleID" [(ngModel)]="Role.RoleID" required autofocus disabled="true"/>
+                        </div>
+                        <div class="field col-10">
+                            <label for="RoleName">Role Name</label>
+                            <input type="text" pInputText id="RoleName" [(ngModel)]="Role.RoleName" required autofocus />
+                            <small class="p-error" *ngIf="submitted && !Role.RoleName">Role Name is required.</small>
+                        </div>
+                    <!-- </p-fieldset> -->
+                        <div class="field col-12">
+                            <p-table [value]="entities" dataKey="id" >
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>ScopeLevel</th>
+                                        <!-- <th>Access</th> -->
+                                        <th>Read Right</th>
+                                        <th>Add Right</th>
+                                        
+                                        <th>Edit Right</th>
+                                        <th>Delete Right</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-entity let-editing="editing" let-ri="rowIndex">
+                                    <tr >
+                                        <td>
+                                            
+                                                    {{entity.ScopeLevel}}
+                                               
+                                        </td>                                       
+                                        <td [pEditableColumn]="entity.ReadRight" pEditableColumnField="ReadRight">
+                                            <p-cellEditor>
+                                                <ng-template pTemplate="input">
+                                                    <p-dropdown [options]="bool" (onChange)="disableAll($event, entity)" [(ngModel)]="entity.ReadRight" placeholder="Select options" optionLabel="name" [showClear]="false"></p-dropdown>
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{entity.ReadRight.name}}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                        <td [pEditableColumn]="entity.AddRight" pEditableColumnField="AddRight">
+                                            <p-cellEditor>
+                                                <ng-template pTemplate="input">
+                                                    <!-- <input pInputText type="text" [(ngModel)]="product.DoxCutoff"> -->
+                                                    <p-dropdown [disabled]="entity.ReadRight.code==0" [options]="bool" [(ngModel)]="entity.AddRight" placeholder="Select options" optionLabel="name" [showClear]="false"></p-dropdown>
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{entity.AddRight.name}}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                        <td [pEditableColumn]="entity.EditRight" pEditableColumnField="EditRight">
+                                            <p-cellEditor>
+                                                <ng-template pTemplate="input">
+                                                    <p-dropdown [disabled]="entity.ReadRight.code==0" [options]="bool" [(ngModel)]="entity.EditRight" placeholder="Select options" optionLabel="name" [showClear]="false"></p-dropdown>
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{entity.EditRight.name}}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                        <td [pEditableColumn]="entity.DeleteRight" pEditableColumnField="DeleteRight">
+                                            <p-cellEditor>
+                                                <ng-template pTemplate="input">
+                                                    <p-dropdown [disabled]="entity.ReadRight.code==0" [options]="bool" [(ngModel)]="entity.DeleteRight" placeholder="Select options" optionLabel="name" [showClear]="false"></p-dropdown>
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{entity.DeleteRight.name}}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                        <!-- <td>
+                                            <div class="flex align-items-center justify-content-center gap-2">
+                                                <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(entity)" class="p-button-rounded p-button-text"></button>
+                                                <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(entity)" class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                                                <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(entity, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+                                            </div>
+                                        </td> -->
+                                    </tr>
+                                </ng-template>
+                              </p-table>
+                        </div>
+                    </div>
+                        
+            </ng-template>
+        
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveRole()"></button>
+            </ng-template>
+        </p-dialog>
+        
+    </div>
+</div>        
+<br>
+<br>
+<br>
+<br>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+    </p-blockUI>
+    <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+    <p-messages [enableService]="true"></p-messages>

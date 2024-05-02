@@ -1,0 +1,93 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-toolbar styleClass="mb-2">
+                <ng-template pTemplate="left">
+                    <!-- <button pbutton pripple label="add" icon="pi pi-plus" class="p-button-success mr-2" (click)="addrailcar()"></button> -->
+                    <!-- <button pButton pRipple label="Update " icon="pi pi-file-edit" class="p-button-secondary mr-2" (click)="Updateinstruct()"></button> -->
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+                </ng-template>
+            </p-toolbar>
+        <p-table #dt 
+        [columns]="cols" 
+        [value]="rows" 
+        [reorderableColumns]="true" 
+        [rowsPerPageOptions]="[10, 25, 50]" 
+        [rows]="10" 
+        [paginator]="true" 
+        [globalFilterFields]= "cols" 
+           
+            [rowHover]="true" 
+            dataKey="id"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" 
+            [showCurrentPageReport]="true" 
+            styleClass="p-datatable-gridlines"
+            [scrollable]="true"
+            scrollHeight="2000px"
+            frozenWidth="200px"
+            responsiveLayout="scroll">
+
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <span class="p-input-icon-right">
+                    <i class="pi pi-search"></i>
+                    <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                </span>
+                <h2 class="m-0">RailCars Missing Phyto Application</h2>
+                <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
+            </div>
+        </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                            <th hidden>ID</th>
+                            <th>Car Number</th>
+                            <th>Ship Date</th>
+                            <th>Commodity</th>
+                            <th>Variety</th>
+                            <th>Grade</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            
+                            <th><p-columnFilter type="text" field="carnumber"  display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="date" field="shipdate" display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="text" field="Name" display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="text" field="variety" display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="text" field="Grade" display="menu"></p-columnFilter></th> 
+                            <th></th>                           
+                        </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        
+                        <td hidden>{{rowData.id}}</td>
+
+                        <td>{{rowData.carnumber}}</td>
+                        
+                        <td>{{rowData.shipdate | date}}</td>
+                      
+                        <td>{{rowData.Name}}</td>
+                        
+                        <td>{{rowData.variety}}</td>
+                        
+                        <td>{{rowData.Grade}}</td>
+                        <td></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="flex align-items-center justify-content-between">
+                    In total there are {{rows ? rows.length : 0 }} Railcars.
+                </div>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

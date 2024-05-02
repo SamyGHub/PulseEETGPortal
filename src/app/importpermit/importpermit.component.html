@@ -1,0 +1,20 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <label for="Name">Import Permit No.</label>
+            <input type="text" pInputText id="Name"  required autofocus />
+            <label for="ImpQuant">Import Permit Quantity</label>
+            <input type="text" pInputText id="ImpQuant"  required autofocus />
+            
+            <!-- <label for="Permitdate">Import Permit Date.</label>
+            <p-calendar [(ngModel)]="impvalue"></p-calendar>
+           
+            <label for="Expiredate">Import Expire Date.</label>
+            <p-calendar [(ngModel)]="Expvalue"></p-calendar> -->
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    Import Permit Certificates insertion
+                </ng-template>
+            </p-toolbar>
+            <p-fileUpload name="demo[]" [customUpload]="true" (uploadHandler)="myUploader($event)" [auto]="true" accept="image/*" [multiple]="true"> </p-fileUpload>
+</div></div></div>

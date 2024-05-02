@@ -1,0 +1,62 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        
+        <p-megaMenu [model]="items" [style]="{'width': '100%','z-index':'1000','position':'relative'}" styleClass="flex" appendTo="body" expanded="false">
+            <ng-template pTemplate="start">
+                <img src="./assets/img/ETG.png" height="40" class="shadow-4"/>
+            </ng-template>
+            <ng-template pTemplate="end">
+                
+            </ng-template>
+        </p-megaMenu>
+        <p-toolbar>
+            <ng-template pTemplate="right"> 
+                    <p-overlayPanel #op>
+                      <ng-template pTemplate="content">
+                        <p-table [tableStyle]="{'min-width': '60rem'}">
+                          <ng-template pTemplate="caption">
+                              <div class="flex align-items-center justify-content-between">
+                                  Products
+                                  <p-button icon="pi pi-refresh"></p-button>
+                              </div>
+                          </ng-template>
+                          <ng-template pTemplate="header">
+                              <tr>
+                                  <th>Name</th>
+                                  <th>Image</th>
+                                  <th>Price</th>
+                                  <th>Category</th>
+                                  <th>Reviews</th>
+                                  <th>Status</th>
+                              </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-product>
+                              <tr>
+                                  <td>V</td>
+                                  <td>BN</td>
+                                  <td>USD</td>
+                                  <td>BNM</td>
+                                  <td>VB</td>
+                                  <td></td>
+                              </tr>
+                          </ng-template>
+                          <ng-template pTemplate="summary">
+                              <div class="flex align-items-center justify-content-between">
+                                  In total there are products.
+                              </div>
+                          </ng-template>
+                      </p-table>
+                      </ng-template>
+                    </p-overlayPanel>
+                    <p-button
+                      (click)="op.toggle($event)"
+                      icon="pi pi-bell"
+                    ></p-button>
+            
+            </ng-template>
+            <ng-template pTemplate="left">
+                <h2>Welcome, {{loggedinuser.UName}}, PulseE is a Software that support the business processes associated with trading commodities</h2>
+            </ng-template>
+        </p-toolbar>
+    </div>
+</div>

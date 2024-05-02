@@ -1,0 +1,137 @@
+<div class="grid">
+    <div class="col-10 col-offset-1"><app-groups></app-groups></div>
+    <div class="field col-10 col-offset-1" *ngIf="!Contractrows.length">
+        <p-card header="Import Purchase Transactions">
+            <p>ERP Purchase Transactions Import -- Excel Sheet Upload</p>
+            <div class="field col-12 md:col-4">
+              <!-- <label for="basic">Basic</label>
+              <p-calendar inputId="basic" [(ngModel)]="Fdlvdt"></p-calendar> -->
+            </div>
+            <p-fileUpload name="demo[]" (onSelect)="csv2Array($event)"
+                  [multiple]="true" accept="text/*" [maxFileSize]="10000000">
+                  <ng-template pTemplate="content">
+                      <ul *ngIf="uploadedFiles.length">
+                          <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                      </ul>
+                  </ng-template>
+          </p-fileUpload>
+        </p-card>
+    </div>
+        <div class="field col-10 col-offset-1" *ngIf="Contractrows.length">
+             <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                   <!-- <button pButton pRipple label="Process Selected Contracts" icon="pi pi-plus" (click)="processSalesTransaction()" class="p-button-success mr-2" ></button>-->
+                    <button pButton pRipple label="Clear Data" icon="pi pi-trash" (click)="Clear()" class="p-button-danger"></button>
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <button pButton pRipple label="Assign" icon="pi pi-users" class="p-button-help"></button>
+                </ng-template> 
+            </p-toolbar> 
+
+            <p-table #dt 
+            [columns]="cols" 
+            [rowsPerPageOptions]="[10, 25, 50]" 
+            [value]="Contractrows" 
+            dataKey="Contractnumber" 
+            responsiveLayout="scroll" 
+            [tableStyle]="{'min-width': '50rem'}" 
+            [rows]="10" 
+            [paginator]="true" 
+            [globalFilterFields]= "cols" 
+            [rowHover]="true" 
+            [globalFilterFields]="cols"
+            rowGroupMode="subheader" 
+            groupRowsBy="Contractnumber" 
+            styleClass="p-datatable-gridlines">
+
+            <ng-template pTemplate="caption">
+                <div class="flex align-items-center justify-content-between">
+                    <h5 class="m-0">Manage Purchase Contracts Transactions</h5>
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                    </span>
+                </div>
+            </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        
+                        <th>Contract Date</th>
+                        <th>Contract Number</th>
+                        <th>Customer</th>
+                        <th>Contract Quantity</th>
+                        <th>Price</th>
+                        <th>Refrence Number</th>
+                        <th>Ware House</th>
+                        <th>Origin</th>
+                        <th>Delivery Terms</th>
+                        <th>Delivery From Date</th>
+                        <th>Delivery To Date</th>
+                        <th>Discharge Port</th>
+                        <th>Shipment Period</th>      
+                    </tr>
+                    <tr>
+                        <th><p-columnFilter type="date" field="Contractdate" display="menu"></p-columnFilter></th>
+                        <th><p-columnFilter type="text" field="Contractnumber" display="menu"></p-columnFilter></th>
+                        
+                        <th><p-columnFilter type="text" field="Name2" display="menu"></p-columnFilter></th>
+                        
+                        <th><p-columnFilter type="numeric" field="Contractquantity" display="menu"></p-columnFilter></th>
+                        <th><p-columnFilter type="numeric" field="Price" display="menu"></p-columnFilter></th>
+                        <th><p-columnFilter type="text" field="Referencenumber"  display="menu"></p-columnFilter></th>
+                        <th><p-columnFilter type="text" field="Warehouse"  display="menu"></p-columnFilter></th>
+                        <th><p-columnFilter type="text" field="ORIGINVARIETY"  display="menu"></p-columnFilter></th>
+                        <th><p-columnFilter type="text" field="Deliveryterms"  display="menu"></p-columnFilter></th>
+                       
+                        <th><p-columnFilter type="date" field="Deliveryfromdate" display="menu"></p-columnFilter></th>
+                        <th><p-columnFilter type="date" field="Deliverytodate" display="menu"></p-columnFilter></th>
+                        <th></th>
+                        <th></th>
+                       </tr>
+                </ng-template>
+                <ng-template pTemplate="groupheader" let-rowData>
+                    <tr pRowGroupHeader>
+                        <td colspan="14">
+                            <span class="font-bold ml-2">{{rowData.Contractnumber}}</span>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                   
+                    <tr>
+                        
+                        <td>{{rowData.Contractdate | date}}</td>
+                        <td>{{rowData.Contractnumber}}</td>
+                        <td>{{rowData.Name2}}</td>
+                        <td>{{rowData.Contractquantity}}</td>
+                        <td>{{rowData.Price}}</td>
+                        <td>{{rowData.Referencenumber}}</td>
+                        <td>{{rowData.Warehouse}}</td>
+                        <td>{{rowData.ORIGINVARIETY}}</td>
+                        <td>{{rowData.Deliveryterms}}</td>
+                        <td>{{rowData.Deliveryfromdate | date}}</td>
+                        <td>{{rowData.Deliverytodate | date}}</td>
+                        <td>{{rowData.Portofdischarge}}</td>
+                        <td>{{rowData.Shipmentperiod}}</td>
+                        
+                        
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{Contractrows ? Contractrows.length : 0 }} Transactions.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+<br>
+<br><br>
+<br>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="100000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

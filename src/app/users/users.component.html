@@ -1,0 +1,178 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <p-toast></p-toast>
+        <p-dialog header="System Message" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+            [draggable]="false" [resizable]="false">
+            <p class="flex align-items-center justify-content-between">{{dialougmessage}}</p>
+            <ng-template pTemplate="footer">
+                <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+            </ng-template>
+        </p-dialog>   
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedUsers(selectedUsers)" [disabled]="!selectedUsers || !selectedUsers.length"></button>
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <button pButton pRipple (click)="addToTeams()" label="Teams" icon="pi pi-users" class="p-button-help mr-2" [disabled]="!selectedUsers || !selectedUsers.length || (selectedUsers.length>1)"></button>
+                    <button pButton pRipple (click)="addToCommodity(selectedUsers)" label="Commodities" icon="pi pi-slack" class="p-button-primary" [disabled]="!selectedUsers || !selectedUsers.length || (selectedUsers.length>1)"></button>
+                </ng-template>
+            </p-toolbar>
+            <p-table #dt [columns]="cols" [rowsPerPageOptions]="[10, 25, 50]" [value]="rows" [rows]="15" [paginator]="true" [globalFilterFields]= "cols" responsiveLayout="scroll"
+                [(selection)]="selectedUsers" [rowHover]="true" dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true" styleClass="p-datatable-gridlines" scrollHeight="750px">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <h5 class="m-0">Manage Users</h5>
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <ng-container *ngFor="let col of columns">
+                            <th *ngIf="col!=='Phone' && col!=='Login' && col!=='IsAdmin' && col!=='IsActive' && col!=='Password' && col!=='Security' && col!=='roleid'" pSortableColumn={{col}}><p-sortIcon></p-sortIcon>{{'TableHeaders.Wrx_Users.' + col | translate}}</th>
+                        </ng-container>
+                        <th>Actions</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <ng-container *ngFor="let col of columns">
+                            <td *ngIf="col!=='Phone' && col!=='Login' && col!=='IsAdmin' && col!=='IsActive' && col!=='Password' && col !== 'Security' && col!=='roleid'">
+                                <div>{{rowData[col]}}</div>
+                                <!-- <div *ngIf="col=='createdon' && col=='modifiedon'">{{rowData[col] | date}}</div> -->
+                            </td>
+                        </ng-container>
+                        <td>
+                            <button pButton pRipple icon="pi pi-eraser" class="p-button-rounded p-button-danger mr-2" (click)="ResetPass(rowData)" pTooltip="Reset Password" tooltipPosition="top" placeholder="Top"></button>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editUser(rowData)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteUser(rowData)"></button>
+                        </td>
+                        <!-- <td></td> -->
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{users ? rows.length : 0 }} Users.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        
+        <p-dialog [(visible)]="addNewDialogue" [style]="{width: '650px'}" header="User Details" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content">
+                
+                <div class="grid">
+                    <div class="col-4 col-offset-1">
+                        <label for="Name">User Name</label>
+                        <input type="text" pInputText id="Name" [(ngModel)]="user.Name" required autofocus />
+                        <small class="p-error" *ngIf="submitted && !user.Name">User Name is required.</small>
+                    </div>
+                    <div class="col-5 col-offset-1">
+                        <label for="Login">User Login</label>
+                        <input type="text" pInputText id="Login" [(ngModel)]="user.Login" required autofocus />
+                        <small class="p-error" *ngIf="submitted && !user.Login">User Login is required.</small>
+                    </div>
+                    <div class="col-4 col-offset-1">
+                        <label for="Password">Password</label>
+                        <input type="password" pInputText id="Password" [(ngModel)]="user.Password" required autofocus />
+                        <small class="p-error" *ngIf="submitted && !user.Password">Phone is required.</small>
+                    </div>
+                    <div class="col-5 col-offset-1">
+                        <label for="Security">User Security</label>
+                        <input type="text" pInputText id="Security" [(ngModel)]="user.Security" required autofocus />
+                        <small class="p-error" *ngIf="submitted && !user.Security">user security is required.</small>
+                    </div>
+                    <div class="col-4 col-offset-1">
+                        <label for="Phone">Phone</label>
+                        <p-inputMask mask="(999) 999-9999" id="Phone" [(ngModel)]="user.Phone" placeholder="(999) 999-9999" autofocus></p-inputMask>
+                        <small class="p-error" *ngIf="submitted && !user.Phone">phone is required.</small>
+                    </div>
+                    <div class="col-5 col-offset-1">
+                        <label for="Email">Email</label>
+                        <input type="text" pInputText id="Email" [(ngModel)]="user.Email" required autofocus />
+                        <small class="p-error" *ngIf="submitted && !user.Email">Email is required.</small>
+                    </div>
+                    <div class="col-10 col-offset-1">
+                        <label for="Title">Title</label>
+                        <textarea id="Title" pInputTextarea [(ngModel)]="user.Title" required rows="3" cols="20"></textarea>
+                    </div>
+                    <div class="col-4 col-offset-1" *ngIf="submitted">
+                        <p-checkbox value="IsAdmin" [(ngModel)]="user.IsAdmin" inputId="IsAdmin" [binary]="true"></p-checkbox>
+                        <label for="IsAdmin">Is Admin</label>
+                    </div>
+                    <div class="col-4 col-offset-1" *ngIf="submitted">
+                        <p-checkbox value="IsActive" [(ngModel)]="user.IsActive" inputId="IsActive" [binary]="true"></p-checkbox>
+                        <label for="IsActive">Is Active = {{user.IsActive}}</label>
+                    </div>
+                </div>
+            </ng-template>
+        
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveUser()"></button>
+            </ng-template>
+        </p-dialog>
+        <!-- Teams Dialogue -->
+        <p-dialog [(visible)]="teamsDialogue" [style]="{width: '700px',height: '600px'}" header="Teams Details" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content">
+                  <p-pickList [source]="sourceTeams" [target]="targetTeams" sourceHeader="Available" targetHeader="Selected" [dragdrop]="true"
+            [responsive]="true"  filterBy="Name" [showSourceControls] = false [showTargetControls] = false
+            sourceFilterPlaceholder="Search by name" targetFilterPlaceholder="Search by name"
+             [sourceStyle]="{height:'300px'}" [targetStyle]="{height:'300px'}">
+            <ng-template let-team pTemplate="item">
+                
+                <div style="font-size:14px;float:left;margin:15px 5px 0 0">{{team.Name}} || {{team.Description}}</div>
+                    
+            </ng-template>
+            
+        </p-pickList>
+        
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="teamsDialogue=false"></button>
+            <button pButton pRipple label="Save" icon="pi pi-check" [disabled]="!targetTeams || !targetTeams.length" class="p-button-text" (click)="saveTeamstoUser()"></button>
+        </ng-template>
+        </p-dialog>
+        <!-- end of teams dialogue -->
+         <!-- Commodity Dialogue -->
+         <p-dialog [(visible)]="CommoditiesDialogue" [style]="{width: '700px',height: '600px'}" header="Commodity Details" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content">
+                <p-pickList [source]="sourceCommodities" [target]="targetCommodities" sourceHeader="Available" targetHeader="Selected" [dragdrop]="true"
+                    [responsive]="true"  filterBy="Name" [showSourceControls] = false [showTargetControls] = false
+                    sourceFilterPlaceholder="Search by Name" targetFilterPlaceholder="Search by Name"
+                    [sourceStyle]="{height:'300px'}" [targetStyle]="{height:'300px'}">
+                    <ng-template let-Commodity pTemplate="item">  
+                        <div style="font-size:14px;float:left;margin:15px 5px 0 0">{{Commodity.Name}}</div>    
+                    </ng-template>
+                </p-pickList>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="CommoditiesDialogue=false"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" [disabled]="!targetCommodities || !targetCommodities.length" class="p-button-text" (click)="savecommoditytoUser(selectedUsers)"></button>
+            </ng-template>
+        </p-dialog>
+        <!-- end of Commodity dialogue -->
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

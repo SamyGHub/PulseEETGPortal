@@ -1,0 +1,121 @@
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                    <!-- <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedUsers()" [disabled]="!selectedUsers || !selectedUsers.length"></button> -->
+                </ng-template>
+            </p-toolbar>
+            <p-dialog header="Network Issue" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+                [draggable]="false" [resizable]="false">
+                <p class="flex align-items-center justify-content-between">{{dialougmessage}}</p>
+                <ng-template pTemplate="footer">
+                    <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+                </ng-template>
+            </p-dialog>
+            <p-table #dt [columns]="cols" [rowsPerPageOptions]="[10, 25, 50]" [value]="rows" [rows]="10" [paginator]="true" [globalFilterFields]= "cols" responsiveLayout="scroll"
+                [(selection)]="selectedTeams" [rowHover]="true" dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true" styleClass="p-datatable-gridlines">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <h5 class="m-0">Manage Teams</h5>
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'" />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th> 
+                        <ng-container *ngFor="let col of columns">
+                            <th pSortableColumn={{col}}><p-sortIcon></p-sortIcon>{{'TableHeaders.Wrx_Teams.' + col | translate}}</th>
+                        </ng-container>
+                        <th>Action</th>
+                    </tr> 
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <td *ngFor="let col of columns">
+                           <div>{{rowData[col]}}</div>
+                           
+                        </td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editTeam(rowData)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedTeam(rowData)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{rows ? rows.length : 0 }} Teams.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        
+        <p-dialog [(visible)]="addNewDialogue" [style]="{width: '450px'}" header="Team Details" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="field">
+                    <label for="Name">Team Name</label>
+                    <input type="text" pInputText id="Name" [(ngModel)]="Team.Name" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !Team.Name">Team Name is required.</small>
+                </div>
+                <div class="field">
+                    <label for="Description">Description</label>
+                    <textarea id="Description" pInputTextarea [(ngModel)]="Team.Description" required rows="3" cols="20"></textarea>
+                    
+                </div>
+                    <div class="field-checkbox">
+                    <p-checkbox id ="IsActive" name="IsActive" [(ngModel)]="Team.IsActive" [binary]="true" value="IsActive"></p-checkbox>
+                    <label for="IsActive">Is Active</label>
+                </div>
+                <!--<div class="field">
+                    <label for="modifier">Modifier</label>
+                    <input type="text" pInputText id="modifier" [(ngModel)]="Team.modifier" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !Team.modifier">Modifier is required.</small>
+                </div>
+                <div class="field">
+                    <label for="datecreate">Created Date</label>
+                    <p-calendar [(ngModel)]="Team.datecreate" dateFormat="dd.mm.yy"></p-calendar>
+                   
+                </div>
+                <div class="field">
+                    <label for="datemodify">Modified Date</label>
+                    <p-calendar [(ngModel)]="Team.datemodify" dateFormat="dd.mm.yy"></p-calendar>
+            
+                </div>-->
+        
+                                
+            </ng-template>
+        
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveTeam()"></button>
+            </ng-template>
+        </p-dialog>
+        
+    </div>
+</div>        
+<br>
+<br>
+<br>
+<br>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

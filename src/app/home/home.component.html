@@ -1,0 +1,117 @@
+<div class="grid" >
+    <div class="col-10 col-offset-1" [style]="{'text-align':'center','color':'black', 'font-size':'30px', 'font-weight':'bold', 'font-family':'verdana'}">Contracts Status Statistics</div>
+    <div class="col-1 col-offset-3" [style]="{'text-align':'left','color':'black', 'font-size':'30px'}">
+        <p-card header="Opened" [style]="{ 'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'black', 'font-size':'24px'}">
+                {{statuscounts[0]?.Opened}}
+            </p>
+        </p-card>
+    </div>
+    <div class="col-1">
+        <p-card header="Closed" [style]="{'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'green', 'font-size':'24px'}">
+                {{statuscounts[0]?.Closed}}
+            </p>
+        </p-card>
+    </div>
+      <div class="col-1">
+        <p-card header="Planned" [style]="{'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'navy', 'font-size':'24px'}">
+                {{statuscounts[0]?.Planned}}
+            </p>
+        </p-card>
+       </div>
+       <div class="col-1">
+        <p-card header="Cancelled" [style]="{'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'red', 'font-size':'24px'}">
+                {{statuscounts[0]?.Cancelled}}
+            </p>
+        </p-card>
+       </div>
+       <div class="col-1">
+        <p-card header="Washed Out" [style]="{'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'red', 'font-size':'24px'}">
+                {{statuscounts[0]?.WashedOut}}
+            </p>
+        </p-card>
+       </div>
+       <div class="col-1">
+        <p-card header="Dummy" [style]="{'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'red', 'font-size':'24px'}">
+                {{statuscounts[0]?.Dummy}}
+            </p>
+        </p-card>
+       </div>
+       <div class="col-10 col-offset-1" [style]="{'text-align':'center','color':'black', 'font-size':'30px', 'font-weight':'bold', 'font-family':'verdana'}">Splits Status Statistics</div>
+       <div class="col-1 col-offset-2">
+        <p-card header="Total Splits" [style]="{'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'red', 'font-size':'24px'}">
+                {{splitstatuscounts[0]?.TotalSplits}}
+            </p>
+        </p-card>
+       </div>
+       <div class="col-1" [style]="{'text-align':'left','color':'black', 'font-size':'30px'}">
+        <p-card header="Opened" [style]="{ 'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'black', 'font-size':'24px'}">
+                {{splitstatuscounts[0]?.Opened}}
+            </p>
+        </p-card>
+    </div>
+    <div class="col-1">
+        <p-card header="Closed" [style]="{'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'green', 'font-size':'24px'}">
+                {{splitstatuscounts[0]?.Closed}}
+            </p>
+        </p-card>
+    </div>
+      <div class="col-1">
+        <p-card header="Transloaded" [style]="{'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'navy', 'font-size':'24px'}">
+                {{splitstatuscounts[0]?.Transloaded}}
+            </p>
+        </p-card>
+       </div>
+       <div class="col-1">
+        <p-card header="Planned" [style]="{'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'red', 'font-size':'24px'}">
+                {{splitstatuscounts[0]?.Planned}}
+            </p>
+        </p-card>
+       </div>
+       <div class="col-1">
+        <p-card header="Cancelled" [style]="{'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'red', 'font-size':'24px'}">
+                {{splitstatuscounts[0]?.Cancelled}}
+            </p>
+        </p-card>
+       </div>
+       <div class="col-1">
+        <p-card header="WashedOut" [style]="{'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'red', 'font-size':'24px'}">
+                {{splitstatuscounts[0]?.WashedOut}}
+            </p>
+        </p-card>
+       </div>
+       <div class="col-1">
+        <p-card header="DUMMY" [style]="{'text-align':'center' }">
+            <p class="m-0" [style]="{'text-align':'center','color':'red', 'font-size':'24px'}">
+                {{splitstatuscounts[0]?.DUMMY}}
+            </p>
+        </p-card>
+       </div>
+       <div class="col-4 col-offset-1">
+        <div class="card">
+            <h1 [style]="{'text-align':'center','color':'black', 'font-size':'30px', 'font-weight':'bold', 'font-family':'verdana'}">Top 10 Sales By Commodity</h1>
+            <p-chart type="bar" [data]="salesbycommodity" [options]="options"></p-chart>
+        </div>
+
+    </div>
+    
+    <div class="col-4 col-offset-1" >
+        <div class="card">
+            <h5 [style]="{'text-align':'center','color':'black', 'font-size':'30px', 'font-weight':'bold', 'font-family':'verdana'}">Documents Missing by Document Type</h5>
+            <p-chart type="bar" [data]="data" [options]="chartOptions"></p-chart>
+        </div>
+    </div>
+   
+</div>

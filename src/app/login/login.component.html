@@ -1,0 +1,64 @@
+<div id="sect1"class="container">
+    <p-dialog header="Message" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+        [draggable]="false" [resizable]="false">
+        <p class="flex align-items-center justify-content-between">{{dialougmessage}}</p>
+        <ng-template pTemplate="footer">
+            <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-dialog>   
+<div class="login_div" #login>
+    <form class="login_form" [formGroup]="formdata" (ngSubmit)="onSubmit(formdata.value)">
+            <div class="p-fluid grid">
+                <div class="field col-10 col-offset-1">
+                    <div class="logo" align="center">
+                        <img src="./assets/img/ETG.png" height="60" class="shadow-4"/>
+                        
+                    </div>
+                    <div class="logo" align="center">
+                        ETG Commodities
+                    </div>
+                </div>
+
+            <div class="grid p-fluid">
+                
+                    <div class="field col-10  col-offset-1">
+                        <span class="p-float-label  p-input-icon-left">
+                        <i class="pi pi-user"></i>
+                        <input type="text" id="inputtext1" pInputText formControlName = "username"> 
+                        <label for="inputtext">User Name</label></span>
+                    </div>
+            
+            <div class="field col-10  col-offset-1">
+                <span class="p-float-label  p-input-icon-left">
+                <i class="pi pi-envelope"></i>
+                <p-password formControlName = "password" formControlName = "password" [toggleMask]="true" promptLabel="Write your password"></p-password>
+                <!-- <input type="password" id="inputtext2" pInputText >  -->
+                <label for="inputtext">Password</label>
+                </span>
+            </div>
+            <div  class="field col-10  col-offset-1">
+                <button pButton [disabled]="!formdata.valid" type="submit" label="Login" class="p-button-outlined"></button>
+            </div>
+            <div  class="col-10 col-offset-1">
+                Please Contat IT Administrtor to Get a reset password if you forget your password. 
+            </div>
+        </div>
+</div>
+    </form>
+    
+    <div class="field col-12">
+        <p-message [severity]="MessageSevirity" [text]="MessageContent"></p-message>
+        <!-- <p-messages [enableService]="true"></p-messages> -->
+    </div>
+</div>
+</div>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <p style="text-decoration-color: white;">
+        Hello, Please Wait, System is processing your request.</p>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+
+

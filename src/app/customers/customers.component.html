@@ -1,0 +1,243 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedCustomers(selectedCustomers)" [disabled]="!selectedCustomers || !selectedCustomers.length"></button>
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <button pButton pRipple (click)="addDetails()" label="Add Details" icon="pi pi-users" class="p-button-help mr-2" [disabled]="!selectedCustomers || !selectedCustomers.length || (selectedCustomers.length>1)"></button>
+                </ng-template>
+            </p-toolbar>
+        
+            <p-table #dt 
+            [columns]="cols" 
+            [rowsPerPageOptions]="[10, 25, 50]" 
+            [value]="rows" 
+            [rows]="10" 
+            [paginator]="true" 
+            [globalFilterFields]="cols" 
+            responsiveLayout="scroll"
+                [(selection)]="selectedCustomers" 
+                [rowHover]="true" 
+                dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" 
+                [showCurrentPageReport]="true" 
+                styleClass="p-datatable-gridlines" 
+                [scrollable]="true"
+                scrollHeight="1000px"
+                frozenWidth="200px"
+                responsiveLayout="scroll">
+
+                <ng-template pTemplate="caption" styleClass="p-datatable-gridlines">
+                    <div class="flex align-items-center justify-content-between">
+                        <h2 class="m-0 text-blue-800">Manage Customers</h2>
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <ng-container *ngFor="let col of columns">
+                            <th *ngIf="col !=='TeleFax' && col !=='Currency'" pSortableColumn={{col}} [pSortableColumnDisabled]="col === 'image' && col==='Adress' && col==='Phone' && col==='Location'"><p-sortIcon *ngIf="col!=='image'"></p-sortIcon>{{'TableHeaders.vw_CustomerCreation.' + col | translate}}</th>
+                        </ng-container>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <ng-container *ngFor="let col of columns">
+                            <td *ngIf="col !=='TeleFax' && col !=='Currency'">
+                                <div>{{rowData[col]}}</div>
+                            </td>
+                        </ng-container>
+                         <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editCustomer(rowData)" ></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedCustomers(rowData)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{customers ? rows.length : 0 }} Customers.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        
+        <p-dialog [(visible)]="addNewDialogue" [style]="{width: '450px'}" header="Customer Details" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content">
+                
+                <div class="field col-10 col-offset-1">
+                    <label for="CustName">Name</label>
+                    <input type="text" pInputText id="CustName" [(ngModel)]="customer.CustName" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !customer.CustName">Name is required.</small>
+                </div>
+                <!-- <div class="field">
+                    <label for="CustNumber">Customer Number</label>
+                    <input type="text" pInputText id="CustNumber" [(ngModel)]="customer.CustNumber" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !customer.CustNumber">Customer Number is required.</small>
+                </div> -->
+               
+                <div class="field col-10 col-offset-1">
+                    <label for="Address">Address</label>
+                    <textarea id="Address" pInputTextarea [(ngModel)]="customer.Address" required rows="3" cols="20"></textarea>
+                </div>
+                <div class="field col-10 col-offset-1">
+                    <label for="Phone">Phone</label>
+                    <p-inputMask aria-labelledby="phone" mask="(999) 999-99999" [(ngModel)]="customer.Phone"></p-inputMask>
+                </div>
+                <div class="field col-10 col-offset-1">
+                    <label for="Location">Location</label>
+                    <textarea id="Address" pInputTextarea [(ngModel)]="customer.Location" required rows="3" cols="20"></textarea>
+                </div>
+                <div class="field col-10 col-offset-1">
+                    <label for="Email">Email</label>
+                    <!-- <p-inputMask aria-labelledby="Email" mask="?@?.?" [(ngModel)]="customer.Email"></p-inputMask> -->
+                    <input type="text" pInputText id="Email" [(ngModel)]="customer.Email" required autofocus />
+                </div>
+                <div class="field col-10 col-offset-1">
+                    <label for="ERPName">ERP Name</label>
+                    <!-- <p-inputMask aria-labelledby="Email" mask="?@?.?" [(ngModel)]="customer.Email"></p-inputMask> -->
+                    <input type="text" pInputText id="ERPName" [(ngModel)]="customer.ERPName" readonly/>
+                </div>
+            </ng-template>
+        
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveCustomer()"></button>
+            </ng-template>
+        </p-dialog>
+        <p-dialog [(visible)]="adddtDialogue" [style]="{width: '950px'}" header="Customer Details" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content">
+                <p-toolbar styleClass="mb-4">
+                    <ng-template pTemplate="left">
+                        <button pButton pRipple label="Add" icon="pi pi-plus" class="p-button-success mr-2" (click)="addCustdt()"></button>
+                        <!-- <button pButton pRipple label="Update" icon="pi pi-file-edit" class="p-button-success mr-2" (click)="UpdateCustdt()"></button> -->
+                    </ng-template>                              
+                </p-toolbar>
+                <p-table #dt 
+                [columns]="custdtcols" 
+                [value]="custdt" 
+                dataKey="id" 
+                [tableStyle]="{'min-width': '50rem'}"  
+                selectionMode="single" 
+                     styleClass="p-datatable-gridlines" 
+                     [globalFilterFields]="cols" 
+                     (onRowSelect)="onRowSelect($event)" 
+                     (onRowUnselect)="onRowUnselect($event)"
+                     [scrollable]="true"
+                    scrollHeight="1000px"
+                    frozenWidth="200px"
+                    responsiveLayout="scroll">
+
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <h5 class="m-0">Manage Customer Details</h5>
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                    </div>
+                </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <ng-container *ngFor="let col of columns">
+                                    <th pSortableColumn={{col}}><p-sortIcon></p-sortIcon>{{'TableHeaders.Wrx_CustomerDetails.' + col | translate}}</th>
+                                </ng-container>
+                                <th>Action</th>
+                            </tr>
+                        </ng-template>             
+                    <ng-template pTemplate="body" let-custdt let-editing="editing" let-rowIndex="rowIndex">
+                        <tr [pSelectableRow]="custdt" [pSelectableRowIndex]="rowIndex" pTooltip="Click on Row for Update" tooltipPosition="top" tooltipEvent="hover">
+                            <td>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="output">
+                                        {{custdt.id}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="output">
+                                        {{custdt.customerid}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td pEditableColumn>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <input pInputText type="text" [(ngModel)]="custdt.Address">
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{custdt.Address}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td pEditableColumn>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <input pInputText type="text" [(ngModel)]="custdt.Notify">
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{custdt.Notify}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td pEditableColumn>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <input pInputText type="text" [(ngModel)]="custdt.Phone">
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{custdt.Phone}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td pEditableColumn>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-dropdown appendTo="body" [filter]="true" filterBy="Name" [showClear]="true" [options]="countryrows" [(ngModel)]="custdt.City" optionLabel="Name" optionValue="id"></p-dropdown>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        <div *ngFor="let item of countryrows">
+                                            <span *ngIf="item.id==custdt.City">{{item.Name}}</span>
+                                        </div>
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td>
+                                <div class="flex align-items-center justify-content-center gap-2">
+                                    <!-- <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(Prdinstruct,ri)" class="p-button-rounded p-button-text"></button> -->
+                                    <button *ngIf="!custdt.id" pButton pRipple type="button"  icon="pi pi-check" (click)="onRowSavedtd(custdt)" class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                                    <button *ngIf="custdt.id" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedCustomer(custdt)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="summary">
+                        <div class="flex align-items-center justify-content-between">
+                            In total there are {{custdt ? custdt.length : 0 }} Details.
+                        </div>
+                    </ng-template>
+                </p-table>
+            </ng-template>
+        </p-dialog>
+    </div>
+</div>        
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

@@ -1,0 +1,512 @@
+<div class="grid">
+<div class="field col-10 col-offset-1">
+    <div class="surface-card p-4 shadow-2 border-round">
+    <!-- <div class="text-2xl font-medium text-600 mb-3">{{rowData.Bookingid}}</div> -->
+    
+    <div *ngIf="rowURL[0]?.phytoURL;then content else other_content"></div>
+    <ng-template #content><label class="text-3xl font-medium text-900 mb-3 text-gray-900">{{rowData.SplitNo}} || <a href="{{rowURL[0]?.phytoURL}}" target="_blank">Phyto Application</a></label></ng-template>
+    <ng-template #other_content><label class="text-3xl font-medium text-900 mb-3 text-gray-900">{{rowData.SplitNo}} || No Phyto</label></ng-template>
+    
+    <div *ngIf="rowURL[0]?.InvoiceURL;then invoicecontent else other_invoicecontent"></div>
+    <ng-template #invoicecontent><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || <a href="{{rowURL[0]?.InvoiceURL}}" target="_blank">Commercial Invoice</a></label></ng-template>
+    <ng-template #other_invoicecontent><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || No Commercial Invoice</label></ng-template>
+    
+    <div *ngIf="rowURL[0]?.AppropriationURL;then Appropriationcontent else other_Appropriationcontent"></div>
+    <ng-template #Appropriationcontent><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || <a href="{{rowURL[0]?.AppropriationURL}}" target="_blank">Appropriation</a>  </label></ng-template>
+    <ng-template #other_Appropriationcontent><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || No Appropriation</label></ng-template>
+
+    <div *ngIf="rowURL[0]?.BLInstructionsURL;then BLInstructionscontent else other_BLInstructionscontent"></div>
+    <ng-template #BLInstructionscontent><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || <a href="{{rowURL[0]?.BLInstructionsURL}}" target="_blank">BLInstructions</a>  </label></ng-template>
+    <ng-template #other_BLInstructionscontent><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || No BLInstructions</label></ng-template>
+
+    <div *ngIf="rowURL[0]?.NonGmoURL;then NonGmocontent else other_NonGmocontent"></div>
+    <ng-template #NonGmocontent><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || <a href="{{rowURL[0]?.NonGmoURL}}" target="_blank">NonGmo</a></label>  </ng-template>
+    <ng-template #other_NonGmocontent><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || No NonGmo</label></ng-template>
+
+    <div *ngIf="rowURL[0]?.HealthCertURL;then HealthCertcontent else other_HealthCertURLcontent"></div>
+    <ng-template #HealthCertcontent><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || <a href="{{rowURL[0]?.HealthCertURL}}" target="_blank">HealthCert</a>  </label></ng-template>
+    <ng-template #other_HealthCertURLcontent><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || No HealthCert</label></ng-template>
+
+    <div *ngIf="rowURL[0]?.weightCertURL;then WeightCertcontent else other_WeightCertcontent"></div>
+    <ng-template #WeightCertcontent><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || <a href="{{rowURL[0]?.weightCertURL}}" target="_blank">WeightCert</a></label></ng-template>
+    <ng-template #other_WeightCertcontent><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || No WeightCert</label></ng-template>
+
+    <div *ngIf="rowURL[0]?.WQURL;then WQ else other_WQcontent"></div>
+    <ng-template #WQ><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || <a href="{{rowURL[0]?.WQURL}}" target="_blank">W & Q</a></label></ng-template>
+    <ng-template #other_WQcontent><label class="text-3xl font-medium text-900 mb-3 text-gray-900"> || No WWQCert</label></ng-template>
+
+    <div class="text-3xl font-medium text-600 mb-3 text-gray-500">{{rowData.Contractnumber}} | {{rowData.CustName}}</div>
+        <div class="text-xl font-medium text-600 mb-3 text-gray-400">{{rowData.Name}} | {{rowData.variety}} | {{rowData.Grade}}</div>
+        <div class="text-xl font-medium text-600 mb-3"><img [src]="rowData.Commodityimg" [alt]="rowData.Name" style="width: 100px;height:70px;" class="shadow-4" /></div>
+        <div class="text-xl font-medium text-500 mb-3 text-gray-500">Contract Date: {{rowData.Contractdate | date}} | Quantity: {{rowData.Quantity}} {{rowData.UnitName}} | Payment: {{rowData.Payment}}</div>
+
+    <div style="height: 180px" class="border-3 border-solid surface-border">
+        <br>
+        <div class="grid">
+            <div class="col-1">
+                <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                <label for="Ordertype" class="text-xl font-small text-600 mb-2">Shipped Quanity: </label>
+            </div>
+            <div class="col-2">
+                <!-- <input type="text" pInputText id="Ordertype" [(ngModel)]="product.Ordertype"  disabled/> -->
+                <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2" *ngIf="railcontainer">{{PhytoDeclaredQTY[0]?.ShippedQTY}} | {{rowData.UnitName}}</label>
+            </div>
+            <div class="col-1">
+                <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                <label for="Deliverytodate" class="text-xl font-small text-600 mb-2">Booking Reference: </label>
+            </div>
+            <div class="col-2">
+                <!-- <input type="text" pInputText id="Deliverytodate" [(ngModel)]="product.Deliverytodate"  disabled/> -->
+                <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.BookingRef}}</label>
+
+            </div>
+            <div class="col-1">
+                <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                <label for="Deliveryfromdate" class="text-xl font-small text-600 mb-2">Del. From Date: </label>
+            </div>
+            <div class="col-2" >
+                <!-- <input type="text" pInputText id="Deliveryfromdate" [(ngModel)]="product.Deliveryfromdate" disabled/> -->
+                <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.Deliveryfromdate | date}}</label>
+            </div>
+            <div class="col-1">
+                <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                <label for="Deliverytodate" class="text-xl font-small text-600 mb-2">Del. To Date: </label>
+            </div>
+            <div class="col-2">
+                <!-- <input type="text" pInputText id="Deliverytodate" [(ngModel)]="product.Deliverytodate"  disabled/> -->
+                <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.Deliverytodate | date}}</label>
+
+            </div>
+            
+            <div class="col-1">
+                <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                <label for="PortName" class="text-xl font-medium text-600 mb-2">Port Name: </label>
+            </div>
+            <div class="col-2">
+                <!-- <input type="text" pInputText id="PortName" [(ngModel)]="product.PortName"  disabled/> -->
+                <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.PortName}}</label>
+
+            </div>
+            <div class="col-1">
+                <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                <label for="Price" class="text-xl font-small text-600 mb-2">Price: </label>
+            </div>
+            <div class="col-2">
+                <!-- <input type="text" pInputText id="Price" [(ngModel)]="product.Price"  disabled/> -->
+                <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.Price}}</label>
+
+            </div>
+            <div class="col-1">
+                <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                <label for="Destination" class="text-xl font-small text-600 mb-2">Destination: </label>
+            </div>
+            <div class="col-2">
+                <!-- <input type="text" pInputText id="Price" [(ngModel)]="product.Price"  disabled/> -->
+                <label for="Destination" class="text-xl font-small text-cyan-700 mb-2">{{rowData.Destination}}</label>
+
+            </div>
+            <div class="col-1">
+                <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                <label for="Amount" class="text-xl font-small text-600 mb-2">Amount: </label>
+            </div>
+            <div class="col-2">
+                <!-- <input type="text" pInputText id="Price" [(ngModel)]="product.Amount"  disabled/> -->
+                <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2" *ngIf="railcontainer">{{rowData.Price * PhytoDeclaredQTY[0]?.ShippedQTY | number:'1.1-2'}} | {{rowData.CurrencyName}}</label>
+
+            </div>
+            <div class="col-1">
+                <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                <label for="Deliveryterms" class="text-xl font-small text-600 mb-2">Delivery Terms: </label>
+                
+            </div>
+            <div class="col-2">
+                <!-- <input type="text" pInputText id="Deliveryterms" [(ngModel)]="product.Deliveryterms"  disabled/> -->
+                <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.Deliveryterms}}</label>
+
+            </div>
+            <div class="col-1">
+                <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                <label for="Amount" class="text-xl font-small text-600 mb-2">ETA: </label>
+            </div>
+            <div class="col-2">
+                <!-- <input type="text" pInputText id="Deliveryterms" [(ngModel)]="product.Deliveryterms"  disabled/> -->
+                <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.ETA | date}}</label>
+
+            </div>
+            <div class="col-1">
+                <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                <label for="Amount" class="text-xl font-small text-600 mb-2">ETS: </label>
+            </div>
+            <div class="col-2">
+                <!-- <input type="text" pInputText id="Deliveryterms" [(ngModel)]="product.Deliveryterms"  disabled/> -->
+                <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.ETS | date}}</label>
+
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+    <div class="field col-10 col-offset-1">
+        <p-toolbar styleClass="mb-4">
+            <ng-template pTemplate="left">
+                <button *ngIf="!Doxobjs.length" pButton pRipple label="ADD Details" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                <button pButton pRipple label="Phyto Application" icon="pi pi-plus" class="p-button-info mr-2" (click)="GetPhyto()" [disabled]="isPhytorail"></button>
+                <button pButton pRipple label="B/L Instructions" icon="pi pi-plus" class="p-button-help mr-2" (click)="GetBLInstructions()" [disabled]="israil"></button>
+                <button pButton pRipple label="Appropriation" icon="pi pi-plus" class="p-button-secondary mr-2" (click)="GetAppropriation()" [disabled]="israil"></button>
+                <button pButton pRipple label="Commercial Invoice" icon="pi pi-plus" class="p-button-warning mr-2" (click)="GetInvoice()" [disabled]="israil"></button>
+            </ng-template>
+            <ng-template pTemplate="right">
+                <p-splitButton label="Certificates" icon="pi pi-plus"  [model]="items" class="p-button-success mr-2" style="width:max-content"></p-splitButton>
+            </ng-template>
+        </p-toolbar>
+        <p-dialog header="System Message" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+        [draggable]="false" [resizable]="false">
+        <p class="flex align-items-center justify-content-between">{{dialougmessage}}</p>
+            <ng-template pTemplate="footer">
+                <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+            </ng-template>
+         </p-dialog> 
+        <p-table #dt 
+        [columns]="cols" 
+        [value]="Doxobjs" 
+        [rows]="10" 
+        [paginator]="true" 
+        [globalFilterFields]= "cols" 
+        responsiveLayout="scroll"
+            [(selection)]="selectedDox" 
+            [rowHover]="true" 
+            dataKey="id"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" 
+            [showCurrentPageReport]="true" 
+            styleClass="p-datatable-gridlines"
+            [scrollable]="true"
+            scrollHeight="1000px"
+            frozenWidth="200px"
+            responsiveLayout="scroll">
+            <ng-template pTemplate="caption">
+                <div class="flex align-items-center justify-content-between">
+                    <h2 class="m-1 text-blue-800">Manage Contract Documentation</h2>
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                    </span>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th style="width: 3rem">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <ng-container *ngFor="let col of columns">
+                        <th *ngIf="col==='NotifyParty' || col==='CustomerAddress' || col==='BLNo' || col==='InsuranceValue' || col==='InsurancecetificateNo' || col==='Invoicedate' "><p-sortIcon></p-sortIcon>{{'TableHeaders.Wrx_Dox.' + col | translate}}</th>
+                    </ng-container>
+                    <th>Action</th>
+                    
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                    </td>
+                    <ng-container *ngFor="let col of columns">
+                        <td *ngIf="col==='NotifyParty' || col==='CustomerAddress' || col==='BLNo' || col==='InsuranceValue' || col==='InsurancecetificateNo'" >
+                            {{rowData[col]}}</td>
+                        <td *ngIf="col==='Invoicedate'">{{rowData['Invoicedate'] | date}}</td>
+                    </ng-container>
+                    <td>
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editDox(rowData)"></button>
+                        <!-- <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedDox(rowData)"></button> -->
+                    </td>
+                   
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="flex align-items-center justify-content-between">
+                    In total there are {{Doxobjs ? Doxobjs.length : 0 }} Dox.
+                </div>
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="card">           
+            <p-dialog [(visible)]="addNewDialogue" [style]="{width: '1400px'}" header="Dox Details" [modal]="true" styleClass="p-fluid" (onShow)="getNotifyDetails(Doxobj.NotifyParty);">
+                <ng-template pTemplate="content">
+                    <p-tabView>                 
+                        <p-tabPanel header="Entries">
+                            <div class="grid"> 
+                                <div class="field col-12">
+                                    <label for="CustomerAddress">Customer’s Address</label>
+                                    <p-dropdown appendTo="body" [options]="custdt" [(ngModel)]="Doxobj.CustomerAddress" optionLabel="Address" optionValue="id" ></p-dropdown>
+                                </div>
+                                <div class="field col-4 col-offset-0">
+                                    <label for="NotifyParty">Notify Party</label>
+                                    <p-dropdown appendTo="body" [options]="Customers" [(ngModel)]="Doxobj.NotifyParty" (onFocus)="getNotifyDetails(Doxobj.NotifyParty);" (onChange)="getNotifyDetails(Doxobj.NotifyParty)" optionLabel="CustName" optionValue="id" [showClear]="true" placeholder="Select Value" [filter]="true" filterBy="CustName" [formControl]="CustName"></p-dropdown>
+                                </div>
+                                <div class="field col-12">
+                                    <label for="CustomerAddress">Notify Address</label>
+
+                                    <p-dropdown appendTo="body" [options]="Notifydt" [(ngModel)]="Doxobj.NotifyAddress" optionLabel="Address" optionValue="id" ></p-dropdown>
+                                
+                                </div>
+
+                                <div class="field col-4 col-offset-0">
+                                    <label for="DocumentTerm">Document Term</label>
+                                    <p-dropdown appendTo="body" [options]="doxtrm" [(ngModel)]="Doxobj.DocumentTerm" optionLabel="DocumentTerms" optionValue="ID"></p-dropdown>
+                                </div>
+                                <div class="field col-4 col-offset-0">
+                                    <label for="PaymentClause">Payment Clause</label>
+                                    <input type="text" pInputText id="PaymentClause" [(ngModel)]="Doxobj.PaymentClause" required autofocus />
+                                </div>
+                                <p-divider type="dotted" class="field col-12 col-offset-0"></p-divider>
+                                <br>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="crop">Crop Year</label>
+                                    <p-dropdown appendTo="body" [options]="crop" [(ngModel)]="Doxobj.crop" optionLabel="cropyear" optionValue="code"></p-dropdown>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="Supervision">Supervision Co.</label>
+                                    <p-dropdown appendTo="body" [options]="Supervision" [(ngModel)]="Doxobj.Supervision" optionLabel="name" optionValue="code"></p-dropdown>
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="productiondate">Production Date</label>
+                                    <p-calendar [(ngModel)]="Doxobj.productiondate"></p-calendar>
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="ExpiryDate">Expiry Date</label>
+                                    <p-calendar [(ngModel)]="Doxobj.ExpiryDate"></p-calendar>
+                                </div>
+                                <p-divider type="dotted" class="field col-12 col-offset-0"></p-divider>
+                                <div class="field col-12 col-offset-0">
+                                    <label for="Consignee">Consignee Option</label>
+                                    <p-dropdown appendTo="body" [options]="consigneeopt" optionLabel="name" optionValue="code" [formControl]="code" (onChange)="ConsigneeChg()"></p-dropdown>
+                                </div>
+
+                                <div class="field col-12 col-offset-0">
+                                    <label for="Consignee">Consignee</label>
+                                    <!-- <p-dropdown appendTo="body" [options]="Consignee" [(ngModel)]="Doxobj.Consignee" optionLabel="name" optionValue="code" (onChange)="ConsigneeChg(Doxobj.Consignee)"></p-dropdown> -->
+                                    <input type="text" pInputText id="Consignee" [(ngModel)]="Doxobj.Consignee" autofocus />
+                                </div>
+                 
+                                <div class="field col-6 col-offset-0">
+                                    <label for="ConsigneeAddr">Consignee Address and Details</label>
+                                    <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="Doxobj.ConsigneeAddr" required autofocus></textarea>
+                                </div>
+                                <div class="field col-6 col-offset-0">
+                                    <label for="Description">Description of Goods</label>
+                                    <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="Doxobj.Description" required autofocus></textarea>
+                                </div>
+                                <div class="field col-6 col-offset-0">
+                                    <label for="Comments">Comments</label>
+                                    <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="Doxobj.Comments" required autofocus></textarea>
+                                </div>
+                                
+                                <div class="field col-6 col-offset-0">
+                                    <label for="MISC">MISC</label>
+                                    <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="Doxobj.MISC" required autofocus></textarea>
+                                </div>
+                                <div class="field col-6 col-offset-0">
+                                    <label for="BLNo">B/L No.</label>
+                                    <input type="text" pInputText id="BLNo" [(ngModel)]="Doxobj.BLNo" required autofocus />
+                                </div>
+                                <div class="field col-6 col-offset-0">
+                                    <label for="BLDate">B/L Date</label>
+                                    <p-calendar [(ngModel)]="Doxobj.BLDate"></p-calendar>
+                                    <!-- <small class="p-error" *ngif="submitted && !doxobj.bldate">bl date is required.</small> -->
+                                </div>
+                                <p-divider type="solid" class="field col-12 col-offset-0">CUSTOMS DECLARATIONS</p-divider>
+                                <div class="field col-4 col-offset-0">
+                                    <label for="B13No">B13 No.</label>
+                                    <input type="text" pInputText id="B13No" [(ngModel)]="Doxobj.B13No" required autofocus />
+                                </div>
+                                <div class="field col-4 col-offset-0">
+                                    <label for="B13Date">B13 Date</label>
+                                    <p-calendar [(ngModel)]="Doxobj.B13Date"></p-calendar>
+                                </div>
+                                <div class="field col-4 col-offset-0">
+                                    <label for="B13Value">B13 Value</label>
+                                    <input type="text" pInputText id="B13Value" [(ngModel)]="Doxobj.B13Value" required autofocus />
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="ValueBinvoice">Value Break Down For Invoice</label>
+                                    <p-dropdown appendTo="body" [options]="ValueBinvoice" [(ngModel)]="Doxobj.ValueBinvoice" optionLabel="name" optionValue="code"></p-dropdown>
+                                </div>
+                                <p-divider type="solid" class="field col-12 col-offset-0">BANKS</p-divider>
+                                <div class="field col-6 col-offset-0">
+                                    <label for="CustomerBank">Customer’s Bank</label>
+                                    <input type="text" pInputText id="CustomerBank" [(ngModel)]="Doxobj.CustomerBank" required autofocus />
+                                </div>
+                                <div class="field col-6 col-offset-0">
+                                    <label for="ETGBank">ETG’s Bank Ref no.</label>
+                                    <input type="text" pInputText id="ETGBank" [(ngModel)]="Doxobj.ETGBank" required autofocus />
+                                </div>
+                                <p-divider type="solid" class="field col-12 col-offset-0">LETTER OF CREDIT</p-divider>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="LetterofCredit">Letter of Credit No.</label>
+                                    <input type="text" pInputText id="LetterofCredit" [(ngModel)]="Doxobj.LetterofCredit" required autofocus />
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="LCIssuanceDate">LC Issuance Date</label>
+                                    <p-calendar [(ngModel)]="Doxobj.LCIssuanceDate"></p-calendar>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="LCExpiryDate">LC Expiry Date</label>
+                                    <p-calendar [(ngModel)]="Doxobj.LCExpiryDate"></p-calendar>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="LCLatestdate">LC Latest date of Shipment</label>
+                                    <p-calendar [(ngModel)]="Doxobj.LCLatestdate" ></p-calendar>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="PresentationPeriod">Presentation Period</label>
+                                    <input type="text" pInputText id="PresentationPeriod" [(ngModel)]="Doxobj.PresentationPeriod" required autofocus />
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="ConfirmingBank">Confirming Bank</label>
+                                    <input type="text" pInputText id="ConfirmingBank" [(ngModel)]="Doxobj.ConfirmingBank" required autofocus />
+                                </div>
+                                <p-divider type="dotted" class="field col-12 col-offset-0">INSURANCE</p-divider>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="InsuranceDate">Insurance Date</label>
+                                    <p-calendar inputId="InsuranceDate" [(ngModel)]="Doxobj.InsuranceDate" ></p-calendar>
+                                    <small class="p-error" *ngIf="submitted && !Doxobj.InsuranceDate">Insurance Date is required.</small>
+                                </div>
+                                
+                                <div class="field col-3 col-offset-0">
+                                    <label for="InsuranceValue">Insured Value</label>
+                                    <input type="text" pInputText id="InsuranceValue" [(ngModel)]="Doxobj.InsuranceValue" required autofocus />
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="InsurancecetificateNo">Insurance cetificate No</label>
+                                    <input type="text" pInputText id="InsurancecetificateNo" [(ngModel)]="Doxobj.InsurancecetificateNo" required autofocus />
+                                    <!-- <small class="p-error" *ngIf="submitted && !Doxobj.InsurancecetificateNo">Insurance certificate No is required.</small> -->
+                                </div>
+                                
+                                <div class="field col-3 col-offset-0">
+                                    <label for="InsurancePremium">Insurance Premium  Value</label>
+                                    <input type="text" pInputText id="InsurancePremium" [(ngModel)]="Doxobj.InsurancePremium" required autofocus />
+                                </div>
+                                <div class="col-1">
+                        <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                        <label for="Amount" class="text-xl font-small text-600 mb-2">ETA: </label>
+                    </div>
+                    <div class="col-2">
+                        <!-- <input type="text" pInputText id="Deliveryterms" [(ngModel)]="product.Deliveryterms"  disabled/> -->
+                        <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.ETA}}</label>
+        
+                    </div>
+                    <div class="col-1">
+                        <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                        <label for="Amount" class="text-xl font-small text-600 mb-2">ETS: </label>
+                    </div>
+                    <div class="col-2">
+                        <!-- <input type="text" pInputText id="Deliveryterms" [(ngModel)]="product.Deliveryterms"  disabled/> -->
+                        <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.ETS}}</label>
+        
+                    </div>
+                                <!-- <div class="field col-2 col-offset-0">
+                                    <p-dropdown appendTo="body" [options]="Insurance" [(ngModel)]="Doxobj.Insurance" optionLabel="name" optionValue="code"></p-dropdown>
+                                </div> -->
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel header="Traceability">
+                            <div class="grid"> 
+                                <div class="field col-1" hidden>
+                                    <label for="BLISent">B/LI Sent</label>
+                                    <p-calendar [(ngModel)]="Doxobj.BLISent" appendTo="body"></p-calendar>
+
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="BLDraftReceived">B/L Draft Received</label>
+                                    <p-calendar [(ngModel)]="Doxobj.BLDraftReceived" appendTo="body"></p-calendar>
+
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="Appropriation">Appropriation</label>
+                                    <p-calendar [(ngModel)]="Doxobj.Appropriation" appendTo="body"></p-calendar>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="BLApproval">B/L Approval</label>
+                                    <p-calendar [(ngModel)]="Doxobj.BLApproval" appendTo="body"></p-calendar>
+
+                                </div>
+                                
+                                <div class="field col-2 col-offset-0">
+                                    <label for="OBLReceived">OB/L Received</label>
+                                    <p-calendar [(ngModel)]="Doxobj.OBLReceived" appendTo="body"></p-calendar>
+
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="WQrequest">W&Q requested</label>
+                                    <p-calendar [(ngModel)]="Doxobj.WQrequest" appendTo="body"></p-calendar>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="WQDraftReceived">W&Q Draft  Received</label>
+                                    <p-calendar [(ngModel)]="Doxobj.WQDraftReceived" appendTo="body"></p-calendar>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="OriginalWQReceived">Original W&Q Received</label>
+                                    <p-calendar [(ngModel)]="Doxobj.OriginalWQReceived" appendTo="body"></p-calendar>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="Phytorequest">Phyto requested</label>
+                                    <p-calendar [(ngModel)]="Doxobj.Phytorequest" appendTo="body"></p-calendar>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="PhytoDraftReceived">Phyto Draft  Received</label>
+                                    <p-calendar [(ngModel)]="Doxobj.PhytoDraftReceived" appendTo="body"></p-calendar>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="OriginalPhytoReceived">Original Phyto Received</label>
+                                    <p-calendar [(ngModel)]="Doxobj.OriginalPhytoReceived" appendTo="body"></p-calendar>
+
+                                </div>
+                                
+                                <div class="field col-2 col-offset-0">
+                                    <label for="COODraftReceived">COO Draft  Received</label>
+                                    <p-calendar [(ngModel)]="Doxobj.COODraftReceived" appendTo="body"></p-calendar>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="COOPhytoReceived">COO Received</label>
+                                    <p-calendar [(ngModel)]="Doxobj.COOPhytoReceived" appendTo="body"></p-calendar>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="DraftSentApproval">Drafts sent for approval</label>
+                                    <p-calendar [(ngModel)]="Doxobj.DraftSentApproval" appendTo="body"></p-calendar>
+
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="Draftsapproved">Drafts approved</label>
+                                    <p-calendar [(ngModel)]="Doxobj.Draftsapproved" appendTo="body"></p-calendar>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="OriginalsCouriered">Originals Couriered on</label>
+                                    <p-calendar [(ngModel)]="Doxobj.OriginalsCouriered" appendTo="body"></p-calendar>
+
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="CourierCompany">Courier Company</label>
+                                    <input type="text" pInputText id="CourierCompany" [(ngModel)]="Doxobj.CourierCompany" required autofocus />
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="AWBNo">AWB No. </label>
+                                    <input type="text" pInputText id="AWBNo" [(ngModel)]="Doxobj.AWBNo" required autofocus />
+                                </div>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveDoxobj()"></button>
+                </ng-template>
+        </p-dialog> 
+       
+    </div>
+</div>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

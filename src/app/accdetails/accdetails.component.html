@@ -1,0 +1,323 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="surface-card p-4 shadow-2 border-round">
+            <div class="text-3xl font-medium text-900 mb-3 text-gray-900">{{rowData.SplitNo}}</div>
+            <div class="text-3xl font-medium text-600 mb-3 text-gray-500">{{rowData.Contractnumber}} | 
+                
+                    <p-inplace [closable]="true" (onDeactivate)="Updateprice()" (onActivate)="getprice()" closeIcon="pi pi-save">
+                        <ng-template pTemplate="display">
+                            <div *ngFor="let item of Customers">
+                                <span *ngIf="item.id==seltrans[0]?.Customerid" class="text-xl font-small text-cyan-800 mb-2 pi pi-pencil">{{item.CustName}}</span>
+                            </div>
+                            <!-- <span>{{product.bagname}}</span> -->
+                        </ng-template>
+                        <ng-template pTemplate="content">
+                            <!-- <input type="text" value="PrimeNG" pInputText /> -->
+                            <p-dropdown appendTo="body" [options]="Customers" [(ngModel)]="seltrans[0].Customerid" [filter]="true" filterBy="CustName" optionLabel="CustName" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                        </ng-template>
+                    </p-inplace> 
+                    <!-- <label for="bagname" class="text-xl font-small text-cyan-700 mb-2">{{product.bagname}}</label> -->
+                
+            </div>
+                <div class="text-xl font-medium text-600 mb-3 text-gray-400">{{rowData.Name}} | {{rowData.Grade}}</div>
+                <div class="text-xl font-medium text-600 mb-3"><img [src]="rowData.Commodityimg" [alt]="rowData.Name" style="width: 100px;height:70px;" class="shadow-4" /></div>
+                <div class="text-xl font-medium text-500 mb-3 text-gray-500">Contract Date: {{rowData.Contractdate | date}} | Quantity: {{rowData.Quantity}} {{rowData.UnitName}} | Payment: {{rowData.Payment}}</div>
+        
+            <div style="height: 160px" class="border-3 border-solid surface-border">
+                <br>
+                <div class="grid">
+                    <div class="col-1">
+                        <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                        <label for="Ordertype" class="text-xl font-small text-600 mb-2">Quanity: </label>
+                        </div>
+                        <div class="col-1">
+                        <!-- <input type="text" pInputText id="Ordertype" [(ngModel)]="product.Ordertype"  disabled/> -->
+                        <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{PhytoDeclaredQTY[0]?.ShippedQTY}} | {{rowData.UnitName}}</label>
+                    </div>
+                  
+                   
+                    <div class="col-2">
+                        <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                        <label for="Deliverytodate" class="text-xl font-small text-600 mb-2">Booking Reference: </label>
+                    </div>
+                    <div class="col-1">
+                        <!-- <input type="text" pInputText id="Deliverytodate" [(ngModel)]="product.Deliverytodate"  disabled/> -->
+                        <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.BookingRef}}</label>
+
+                    </div>
+                    <div class="col-2">
+                        <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                        <label for="Deliveryfromdate" class="text-xl font-small text-600 mb-2">Del. From Date: </label>
+                    </div>
+                    <div class="col-3" >
+                        <!-- <input type="text" pInputText id="Deliveryfromdate" [(ngModel)]="product.Deliveryfromdate" disabled/> -->
+                        <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.Deliveryfromdate | date}}</label>
+                    </div>
+                    <div class="col-1">
+                        <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                        <label for="Deliverytodate" class="text-xl font-small text-600 mb-2">Del. To Date: </label>
+                    </div>
+                    <div class="col-1">
+                        <!-- <input type="text" pInputText id="Deliverytodate" [(ngModel)]="product.Deliverytodate"  disabled/> -->
+                        <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.Deliverytodate | date}}</label>
+        
+                    </div>
+                    
+                    <div class="col-1">
+                        <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                        <label for="PortName" class="text-xl font-medium text-600 mb-2">Port Name: </label>
+                    </div>
+                    <div class="col-1">
+                        <!-- <input type="text" pInputText id="PortName" [(ngModel)]="product.PortName"  disabled/> -->
+                        <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.PortName}}</label>
+        
+                    </div>
+                    <div class="col-1">
+                        <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                        <label for="Price" class="text-xl font-small text-600 mb-2">Price: </label>
+                    </div>
+                    <div class="col-2">
+                        <!-- <input type="text" pInputText id="Price" [(ngModel)]="product.Price"  disabled/> -->
+                        <!-- <label for="deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowdata.price}}</label> -->
+                        <div class="col-2">
+                            <p-inplace [closable]="true" (onDeactivate)="Updateprice()" (onActivate)="getprice()" closeIcon="pi pi-save">
+                                <ng-template pTemplate="display">
+                                    
+                                        <span  class="text-xl font-small text-cyan-700 mb-2 pi pi-pencil">{{seltrans[0]?.Price}}</span>
+                                    
+                                    <!-- <span>{{product.bagname}}</span> -->
+                                </ng-template>
+                                <ng-template pTemplate="content">
+                                    <!-- <input type="text" value="PrimeNG" pInputText /> -->
+                                    <p-inputNumber [(ngModel)]="seltrans[0].Price" [showButtons]="true" inputId="stacked">
+                                    </p-inputNumber>                            
+                                </ng-template>
+                            </p-inplace> 
+                            <!-- <label for="bagname" class="text-xl font-small text-cyan-700 mb-2">{{product.bagname}}</label> -->
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                        <label for="Destination" class="text-xl font-small text-600 mb-2">Destination: </label>
+                    </div>
+                    <div class="col-1">
+                        <!-- <input type="text" pInputText id="Price" [(ngModel)]="product.Price"  disabled/> -->
+                        <label for="Destination" class="text-xl font-small text-cyan-700 mb-2">{{rowData.Destination}}</label>
+        
+                    </div>
+                    <div class="col-1">
+                        <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                        <label for="Amount" class="text-xl font-small text-600 mb-2">Amount: </label>
+                    </div>
+                    <div class="col-1">
+                        <!-- <input type="text" pInputText id="Price" [(ngModel)]="product.Amount"  disabled/> -->
+                        <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.Price * PhytoDeclaredQTY[0]?.ShippedQTY}} | {{rowData.CurrencyName}}</label>
+        
+                    </div>
+                    <div class="col-1">
+                        <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                        <label for="Deliveryterms" class="text-xl font-small text-600 mb-2">Delivery Terms: </label>
+                        
+                    </div>
+                    <div class="col-2">
+                        <!-- <input type="text" pInputText id="Deliveryterms" [(ngModel)]="product.Deliveryterms"  disabled/> -->
+                        <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{rowData.Deliveryterms}}</label>
+        
+                    </div>
+                    <div class="col-1">
+                        <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                        <label for="ETA" class="text-xl font-small text-600 mb-2">ETA: </label>
+                    </div>
+                    <div class="col-2">
+                        <!-- <input type="text" pInputText id="Deliveryterms" [(ngModel)]="product.Deliveryterms"  disabled/> -->
+                        <label for="ETA" class="text-xl font-small text-cyan-700 mb-2">{{rowData.ETA | date}}</label>
+        
+                    </div>
+                    <div class="col-1">
+                        <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                        <label for="ETS" class="text-xl font-small text-600 mb-2">ETS: </label>
+                    </div>
+                    <div class="col-2">
+                        <!-- <input type="text" pInputText id="Deliveryterms" [(ngModel)]="product.Deliveryterms"  disabled/> -->
+                        <label for="ETS" class="text-xl font-small text-cyan-700 mb-2">{{rowData.ETS | date}}</label>
+        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+        <div class="field col-10 col-offset-1">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <button  pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()" *ngIf="!Accobjs.length"></button>
+                    <button pButton pRipple label="Commercial Invoice" icon="pi pi-plus" class="p-button-warning mr-2" (click)="GetInvoice()" [disabled]="israil"></button>
+
+                    <!-- <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedCommodities()" [disabled]="!selectedCommodities || !selectedCommodities.length"></button> -->
+                </ng-template>
+            </p-toolbar>
+            <p-dialog header="Network Issue" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+                [draggable]="false" [resizable]="false">
+                <p class="flex align-items-center justify-content-between">{{dialougmessage}}</p>
+                <ng-template pTemplate="footer">
+                    <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+                </ng-template>
+            </p-dialog>
+            <p-table #dt [columns]="cols" [value]="Accobjs" [rows]="10" [paginator]="true" [globalFilterFields]= "cols" responsiveLayout="scroll"
+                [(selection)]="selectedAcc" [rowHover]="true" dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true" styleClass="p-datatable-gridlines">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <h5 class="m-1">Manage Accounting</h5>
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <ng-container *ngFor="let col of columns">
+                            <th *ngIf="col!=='shipmonths' && col!=='Comments' && col!== 'ChInT' && col!== 'ChValue' && col!=='customerid' && col!=='SplitNo' && col!=='modifiedon' && col!=='modifiedby' && col!=='createdon' && col!=='createdby' && col!=='contractval' && col!=='EDC'"><p-sortIcon></p-sortIcon>{{'TableHeaders.Wrx_Accouting.' + col | translate}}</th>
+                        </ng-container>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-prowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="prowData"></p-tableCheckbox>
+                        </td>
+                        <ng-container *ngFor="let col of columns">
+                            <td *ngIf="col!=='shipmentvalue' && col!=='Comments' && col!=='shipmonths' && col!== 'ChInT' && col!== 'PaymentReceivedate' && col!== 'ChValue' && col!== 'erpinvoicedate'  && col!== 'Paymentreceivedamount' && col!=='customerid' && col!=='SplitNo' && col!=='modifiedon' && col!=='modifiedby' && col!=='createdon' && col!=='createdby' && col!=='contractval' && col!=='EDC'">
+                                {{prowData[col]}}</td>
+                            <td *ngIf="col=== 'PaymentReceivedate' || col==='erpinvoicedate'">
+                                    {{prowData[col] | date}}
+                            </td>
+                            <td *ngIf="col==='shipmentvalue' || col==='Paymentreceivedamount'">
+                                {{prowData[col] | number:'1.1-2'}}
+                            </td>
+                        </ng-container>
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editAcc(prowData)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedAcc(prowData)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{Accobjs ? Accobjs.length : 0 }} Accounts Record.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        <div class="card">
+            <p-dialog [(visible)]="addNewDialogue" [style]="{width: '1200px',height:'1000px'}" header="Accounts Details" [modal]="true" styleClass="p-fluid">
+                <ng-template pTemplate="content">    
+                    <div class="grid"> 
+                        <div class="field col-8" hidden>
+                            <label for="SplitNo">Split No</label>
+                            <input type="text" pInputText id="SplitNo" [(ngModel)]="Accobj.SplitNo" disabled="true" />
+                        </div>
+                        <div class="field col-3 col-offset-0">
+                            <label for="ErpInvoiceDate">Erp Invoice Date</label>
+                            <p-calendar [(ngModel)]="Accobj.erpinvoicedate"></p-calendar>
+                        </div>
+                        <div class="field col-2">
+                            <label for="shipmentvalue">Shipment Value</label>
+                            <p-inputNumber inputId="shipmentvalue" [(ngModel)]="Accobj.shipmentvalue" [readonly]="true" mode="decimal" [minFractionDigits]="1">
+                            </p-inputNumber>
+                            
+                        </div>
+                        <div class="field col-3">
+
+                            <label for="discountvalue">Discount Value</label>
+                            <p-inputNumber [(ngModel)]="Accobj.discountvalue" [showButtons]="true" inputId="stacked" mode="decimal" [minFractionDigits]="2">
+                            </p-inputNumber>
+                            <small class="p-error" *ngIf="submitted && !Accobj.discountvalue">Discount Value is required.</small>
+                        </div>
+                        <div class="field col-2">
+                            <label for="downpaymentvalue">Down Payment Value</label>
+                            <p-inputNumber [(ngModel)]="Accobj.downpaymentvalue" [showButtons]="true" inputId="stacked" mode="decimal" [minFractionDigits]="2">
+                            </p-inputNumber>
+                            <small class="p-error" *ngIf="submitted && !Accobj.downpaymentvalue">Down Payment Value is required.</small>
+                        </div>
+                        <div class="field col-3">
+                            <label for="Paymentvalue">Payment  Value</label>
+                            <p-inputNumber [(ngModel)]="Accobj.Paymentreceivedamount" [showButtons]="true" inputId="stacked" mode="decimal" [minFractionDigits]="2">
+                            </p-inputNumber>
+                        </div>
+                     
+                        <!-- <div class="field col-3">
+                            <label for="erpinvoice">invoice</label>
+                            <p-dropdown appendto="body" [options]="actualtransaction" [(ngmodel)]="accobj.invoice" optionlabel="invoice" optionvalue="invoice"></p-dropdown>
+                            <small class="p-error" *ngif="submitted && !accobj.invoice">invoice is required.</small>
+                        </div> -->
+                        <div class="field col-3">
+                            <label for="erpinvoice">Invoice</label>
+                            <input type="text" pInputText id="erpinvoice" [(ngModel)]="Accobj.invoice" (onchange)="Getinvdate(Accobj.invoice)"/>
+                            <small class="p-error" *ngIf="submitted && !Accobj.invoice">Invoice is required.</small>
+                        </div>
+                        <!--<div class="field col-2">
+                            <label for="invoicevaluestr">Invoice  Value in Words</label>
+                            <input type="text" pInputText id="invoicevaluestr" [(ngModel)]="Accobj.invoicevaluestr" required autofocus />
+                        </div> -->
+                        
+                        <!-- <div class="field col-2">
+                            <label for="erpinvoicenumber">ERP Invoice Number</label>
+                            <input type="text" pInputText id="erpinvoicenumber" [(ngModel)]="Accobj.erpinvoicenumber" required autofocus />
+                            <small class="p-error" *ngIf="submitted && !Accobj.erpinvoicenumber">ERP Invoice is required.</small>
+                        </div>
+                        <div class="field col-3">
+                            <label for="erpinvoicedate">ERP Invoice Date</label>
+                            <p-calendar inputId="erpinvoicedate" [(ngModel)]="Accobj.erpinvoicedate"></p-calendar>
+                            <small class="p-error" *ngIf="submitted && !Accobj.erpinvoicedate">ERP Invoice is required.</small>
+                        </div> -->
+                        <div class="field col-3">
+                            <label for="erpinvoicedate">EDC</label>
+                            <p-dropdown appendTo="body" [options]="EDC" [(ngModel)]="Accobj.EDC" optionLabel="EDC" optionValue="id"></p-dropdown>
+                            <small class="p-error" *ngIf="submitted && !Accobj.EDC">EDC is required.</small>
+                        </div>
+                        <div class="field col-3">
+                            <label for="ChValue">Charge Value</label>
+                            <p-inputNumber [(ngModel)]="Accobj.ChValue" [showButtons]="true" inputId="stacked" mode="decimal" [minFractionDigits]="2">
+                            </p-inputNumber>
+                        </div>
+                          <div class="field col-3">
+                            <label for="ChInT">Charge interest</label>
+                            <p-inputNumber [(ngModel)]="Accobj.ChInT" [showButtons]="true" inputId="stacked" mode="decimal" [minFractionDigits]="2">
+                            </p-inputNumber>
+                        </div>
+                        
+                        <div class="field col-6">
+                            <label for="PaymentReceivedate">Payment Receive Date</label>
+                            <p-calendar inputId="PaymentReceivedate" [(ngModel)]="Accobj.PaymentReceivedate"></p-calendar>
+                            
+                        </div>
+                        
+                            <div class="field col-6 col-offset-0">
+                                <label for="Comments">Comments</label>
+                                <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="Accobj.Comments" required autofocus></textarea>
+                            </div>
+    
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveAccobj()"></button>
+                </ng-template>
+            </p-dialog>
+        </div>
+   
+    </div>
+    <p-blockUI  [blocked]="blockedPanel">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+        <i>
+            Please Wait, System is processing your request.</i>
+    </p-blockUI>
+        <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+        <p-messages [enableService]="true"></p-messages>
+        <p-toast key="toast01" position="top-right"></p-toast>

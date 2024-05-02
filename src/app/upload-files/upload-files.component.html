@@ -1,0 +1,127 @@
+<div class="grid">
+  <div class="col-10 col-offset-1"><app-groups></app-groups></div>
+  <div class="col-10 col-offset-1" *ngIf="!RData.length">
+    
+              <p-card header="Import Sales Contracts" >
+                <p>ERP Sales Contracts Import -- Excel Sheet Upload</p>
+                <!-- <div class="field col-12 md:col-4">
+                  <label for="basic">Basic</label>
+                  <p-calendar inputId="basic" [(ngModel)]="Fdlvdt"></p-calendar>
+                </div> -->
+                <p-fileUpload name="demo[]" (onSelect)="csv2Array($event)"
+                      [multiple]="true" accept="text/*" [maxFileSize]="1000000">
+                      <ng-template pTemplate="content">
+                          <ul *ngIf="uploadedFiles.length">
+                              <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                          </ul>
+                      </ng-template>
+                </p-fileUpload>
+              </p-card>
+          
+    </div>
+    <div class="col-10 col-offset-1" *ngIf="RData.length">
+           
+            <p-toolbar styleClass="mb-2">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="Process Selected Contracts" icon="pi pi-plus" (click)="ProcessContract()" class="p-button-success mr-2" ></button>
+                    <!-- <button pButton pRipple label="Confirm Process" icon="pi pi-plus" (click)="Assign()" class="p-button-success mr-2" ></button> -->
+                    <button pButton pRipple label="Clear Data" icon="pi pi-trash" (click)="Clear()" class="p-button-danger"></button>
+                </ng-template>
+                
+            </p-toolbar>
+            <p-dialog  header="Processing Details" [(visible)]="viewme" [style]="{width: '70vw'}">
+              <p-table #prodt [value]="mymessages" 
+                [tableStyle]="{'min-width': '50rem'}" styleClass="p-datatable-gridlines">
+                <ng-template pTemplate="body" let-rowData>
+                  <tr>
+                    <td>{{rowData}}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-dialog>
+        
+          <p-table #dt [columns]="cols" 
+            [value]="RData" 
+            dataKey="id" 
+            [(selection)]="selectedContracts" 
+            [rowsPerPageOptions]="[10, 25, 50]" 
+            responsiveLayout="scroll" 
+            [tableStyle]="{'min-width': '50rem'}" 
+            [rows]="10" [paginator]="true" 
+            [rowHover]="true" 
+            scrollHeight="950px" 
+            sortMode="single" 
+            rowGroupMode="subheader" 
+            groupRowsBy="Itemnumber" 
+            sortField="Itemnumber" 
+            styleClass="p-datatable-gridlines" 
+            [globalFilterFields]="cols"
+            [scrollable]="true"
+            scrollHeight="1000px"
+            frozenWidth="200px"
+            responsiveLayout="scroll">
+
+          <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h2 class="m-1 text-blue-800">Manage Imported Contracts</h2>
+                <span class="p-input-icon-right">
+                    <i class="pi pi-search"></i>
+                    <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                </span>
+            </div>
+        </ng-template>
+
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <!-- <th style="width: 3rem">
+                      <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                  </th> -->
+                  <ng-container *ngFor="let col of columns">
+                      <th *ngIf="col!=='Name' && col!=='id' && col!=='Unit' && col!=='Itemnumber' && col!=='image'" pSortableColumn={{col}}><p-sortIcon></p-sortIcon>{{'TableHeaders.vw_CalculatedContracts.' + col | translate}}</th>
+                  </ng-container>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="groupheader" let-rowData>
+              <tr pRowGroupHeader>
+                <td colspan="16">
+                  <span *ngFor="let comimage of commodities">
+                    <span *ngIf="comimage.id==rowData.id"> <img [alt]="rowData.Itemnumber" [src]="comimage.Commodityimg" width="32" style="vertical-align: middle" /></span>
+                  </span>
+                  <span class="font-bold ml-2">{{rowData.Itemnumber}}</span>
+              </td>
+              </tr>
+          </ng-template>
+            <ng-template pTemplate="body" let-rowData let-rowIndex let-columns="columns">
+              <tr>
+                <!-- <td>
+                  <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                </td> -->
+                <td>{{rowData.Contractnumber}}</td>
+               <!-- <td>{{rowdata.tot}}</td>
+                <td>{{rowdata.rem}}</td>-->
+                <td>{{rowData.Name2}}</td> 
+                <td>{{rowData.Termsofpayment}}</td>
+                <td>{{rowData.Portofdischarge}}</td>
+                <td>{{rowData.Quantity}}</td>
+                <td>{{rowData.Price}}</td>
+                <td>{{rowData.Amount}}</td>
+                <td>{{rowData.Shipmentperiod}}</td>
+                <td>{{rowData.DestinationCountry}}</td>
+            </tr>  
+            </ng-template>
+            <ng-template pTemplate="summary">
+              <div class="flex align-items-center justify-content-between">
+                  In total there are {{RData ? RData.length : 0 }} Contracts.
+              </div>
+          </ng-template>
+      </p-table>
+    </div> 
+</div>
+
+<p-blockUI  [blocked]="blockedPanel">
+  <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+  <i>
+    Please Wait, System is processing your request.</i>
+  </p-blockUI>
+  <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-messages [enableService]="true"></p-messages>

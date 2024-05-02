@@ -1,0 +1,123 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedCountries(selectedcountry)" [disabled]="!selectedcountry || !selectedcountry.length"></button>
+                </ng-template>
+                
+            </p-toolbar>
+            <p-table #dt 
+            [columns]="cols" 
+            [value]="rows" 
+            [rowsPerPageOptions]="[10, 25, 35, 50]" 
+            [rows]="35" 
+            [paginator]="true" 
+            [globalFilterFields]= "cols" 
+            responsiveLayout="scroll"
+                [(selection)]="selectedcountry" 
+                [rowHover]="true" 
+                dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" 
+                [showCurrentPageReport]="true" 
+                styleClass="p-datatable-gridlines"
+                [scrollable]="true"
+                scrollHeight="930px"
+                frozenWidth="200px"
+                responsiveLayout="scroll">
+
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <h2 class="m-0 text-blue-800">Manage Countries</h2>
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <ng-container *ngFor="let col of columns">
+                            <th *ngIf="col!=='image'" pSortableColumn={{col}} [pSortableColumnDisabled]="col === 'id'"><p-sortIcon *ngIf="col!=='id'"></p-sortIcon>{{'TableHeaders.vw_Wrx_Countries.' + col | translate}}</th>
+                        </ng-container>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <ng-container *ngFor="let col of columns">
+                            <td *ngIf="col!=='image'">
+                                <div>{{rowData[col]}}</div>
+                                
+                            </td>
+                            <!-- <td *ngif="col==='image'">
+                                <div><img [src]="rowdata.image" style="width: 100px;height:70px;" [alt]="rowdata.name" class="shadow-4" /></div>
+                            </td> -->
+                        </ng-container>
+                        <td>
+                           <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editcountry(rowData)"></button>
+                           <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedCountry(rowData)"></button>
+                        </td>
+                    </tr>
+
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{rows ? rows.length : 0 }} Countries.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        
+        <p-dialog [(visible)]="addNewDialogue" [style]="{width: '650px'}" header="Country Details" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="field col-10 col-offset-1">
+                    <label for="Code">Country Code</label>
+                    <input type="text" pInputText id="Code" [(ngModel)]="country.Code" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !country.Code">Code is required.</small>
+                </div>     
+                <div class="field col-10 col-offset-1">
+                        <label for="Name">Country Name</label>
+                        <input type="text" pInputText id="country" [(ngModel)]="country.Name" required autofocus />
+                        <small class="p-error" *ngIf="submitted && !country.Name">Name is required.</small>
+                </div>
+                <div class="field col-10 col-offset-1">
+                    <label for="ERPName">ERP Name</label>
+                    <!-- <p-inputMask aria-labelledby="Email" mask="?@?.?" [(ngModel)]="customer.Email"></p-inputMask> -->
+                    <input type="text" pInputText id="ERPName" [(ngModel)]="country.ERPName"/>
+                </div>
+                <div class="field col-10 col-offset-1">
+                    <label for="Continentid">Continent</label>
+                    <p-dropdown appendTo="body"  [options]="continent" [(ngModel)]="country.Continent" optionLabel="CountryGroup" optionValue="id" [filter]="true" filterBy="CountryGroup" [showClear]="true"></p-dropdown>
+                </div>
+                <div class="field col-10 col-offset-1">
+                    <label for="image">Current image</label><br>
+                    <img [src]="country.image" style="width: 100px;height:100px;" [alt]="country.Name" class="shadow-4"/>
+                </div>
+                <div class="field col-10 col-offset-1">
+                    <label for="image">Uplaod New image</label>
+                    <p-fileUpload name="demo[]" [customUpload]="true" (uploadHandler)="myUploader($event)" (onSelect)="handleFileInput($event)" [auto]="true" accept="image/*"> </p-fileUpload>                            
+                </div>       
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveCountry()"></button>
+            </ng-template>
+        </p-dialog>
+
+    </div>
+</div>   
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

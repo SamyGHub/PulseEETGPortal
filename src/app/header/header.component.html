@@ -1,0 +1,13 @@
+<div class="p-fluid grid">
+    <div class="col-12  md:col-10">
+      <div class="bghdr"></div>
+    </div>
+    <div class="col-12  md:col-2" [ngSwitch]="IsAdmin">
+          <p-menu  #menu [model]="items" [popup]="true" appendTo="body"> 
+          </p-menu>
+          <p-splitButton *ngSwitchCase="'1'" label="Welcome, {{fullName}} || Admin User || {{Title}}" styleClass="p-button-text mr-2 mb-2" iconPos="left" icon="pi pi-user"  [model]="items"></p-splitButton>
+          <p-splitButton *ngSwitchCase="'0'" label="Welcome, {{fullName}} || Normal User || {{Title}}" styleClass="p-button-text mr-2 mb-2" iconPos="left" icon="pi pi-user"  [model]="items"></p-splitButton>
+          <!-- <button pButton type="button" icon="pi pi-user" class="p-button-text" iconPos="right" label="Hi, There" (click)="menu.toggle($event)"></button> -->
+    </div>
+
+</div>

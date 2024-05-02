@@ -1,0 +1,106 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedService(selectedSrv)" [disabled]="!selectedSrv || !selectedSrv.length"></button>
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <button pButton pRipple (click)="addToservicetype()" label="Transloaders" icon="pi pi-truck" class="p-button-help" [disabled]="!selectedSrv || !selectedSrv.length || (selectedSrv.length>1)"></button>
+                </ng-template>
+            </p-toolbar>
+            <p-table #dt [columns]="cols" [rowsPerPageOptions]="[10, 25, 50]" [value]="rows" [rows]="10" [paginator]="true" [globalFilterFields]= "cols" responsiveLayout="scroll"
+                [(selection)]="selectedTrans" [rowHover]="true" dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true" styleClass="p-datatable-gridlines">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <h5 class="m-0">Manage Service Type</h5>
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                        <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                            <ng-container *ngFor="let col of columns">
+                                <th pSortableColumn={{col}}><p-sortIcon></p-sortIcon>{{'TableHeaders.Wrx_ServcieType.' + col | translate}}</th>
+                            </ng-container>
+                            <th>Action</th>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <td *ngFor="let col of columns">
+                            <div>{{rowData[col]}}</div>
+                        </td>
+                        <td>
+                           <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editServiceType(rowData)"></button>
+                           <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedService(rowData)"></button>
+                        </td>
+                    </tr>
+
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{rows ? rows.length : 0 }} Service Type.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        
+        <p-dialog [(visible)]="addNewDialogue" [style]="{width: '450px'}" header="Grade Details" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content">
+                
+            <table>
+                    <tr><td><div class="field">
+                    <label for="SrvName">Service Type Name</label>
+                    <input type="text" pInputText id="SrvName" [(ngModel)]="ServiceType.SrvName" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !ServiceType.SrvName"> Service Type Name is required.</small>
+                </div></td></tr>
+            </table>
+            </ng-template>
+        
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveServiceType()"></button>
+            </ng-template>
+        </p-dialog>
+        <!-- Transloaders  Dialogue -->
+        <p-dialog [(visible)]="SrvDialogue" [style]="{width: '700px',height: '600px'}" header="Servcie Type Details" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content">
+        <p-pickList [source]="sourceTransloader" [target]="targetTransloader" sourceHeader="Available" targetHeader="Selected" [dragdrop]="true"
+            [responsive]="true"  filterBy="Name" [showSourceControls] = false [showTargetControls] = false
+            sourceFilterPlaceholder="Search by name" targetFilterPlaceholder="Search by name"
+            [sourceStyle]="{height:'300px'}" [targetStyle]="{height:'300px'}">
+            <ng-template let-Transloader pTemplate="item">
+                <div style="font-size:14px;float:left;margin:15px 5px 0 0">{{Transloader.Name}}</div>
+            </ng-template>
+        </p-pickList>
+        
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="SrvDialogue=false"></button>
+            <button pButton pRipple label="Save" icon="pi pi-check" [disabled]="!targetTransloader || !targetTransloader.length" class="p-button-text" (click)="saveTransloadertoSrv()"></button>
+        </ng-template>
+        </p-dialog>
+        <!-- end of Commodity dialogue -->
+    </div>
+</div>
+<br>
+<br>
+<br>
+<br>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

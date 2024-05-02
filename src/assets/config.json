@@ -1,0 +1,76 @@
+{
+    "URLs":
+    {
+        "apiUrl":"http://localhost:44304/",
+        "crmBaseUrl": "https://wbs.crm4.dynamics.com",
+        "fileURL": "https://pulseapis.azurewebsites.net/template/output/",
+        "phytoTemplateFileName": "FillXfaField",
+        "Invoicerpt":"rptInvoice_Temp",
+        "InvoicerptCAD":"rptInvoice_Temp_CAD",
+        "AppropriationURL":"rptAppropriation",
+        "NonGmo":"rptNonGmo",
+        "HealthCert":"rptHealthCert",
+        "weightCert":"rptWeightCert",
+        "BLInstructions":"rptBLInstructions",
+        "PackingListURL":"rptPack",
+        "WQURL":"rptWQ"
+    },
+    "DefaultPass":"ETG@123",
+    "ExcludeTables":
+    [
+        {"Name":"Wrx_Roles"},
+        {"Name":"Wrx_Right"},
+        {"Name":"Wrx_ManyMany"}
+    ],
+    "PurchaseTransactionsFileds":
+    [  
+        {"FieldName": "Contractdate"},
+        {"FieldName": "CustName"},       
+        {"FieldName": "Contractnumber"},
+        {"FieldName": "Configuration"},
+        {"FieldName": "ORIGINVARIETY"},
+        {"FieldName": "Grade"},
+        {"FieldName": "Site"},
+        {"FieldName": "Warehouse"},        
+        {"FieldName": "SalesPurchaseorder"},
+        {"FieldName": "Commissiongroup"},
+        {"FieldName": "Ordertype"},
+        {"FieldName": "Deliveryfromdate"},
+        {"FieldName": "Deliverytodate"},
+        {"FieldName": "Deliveryterms"},
+        {"FieldName": "Portofloading"},
+        {"FieldName": "Portofdischarge"},
+        {"FieldName": "Unit"},
+        {"FieldName": "Contractquantity"},
+        {"FieldName": "Received"},
+        {"FieldName": "Currency"},
+        {"FieldName": "Price"},
+        {"FieldName": "Payment"},
+        {"FieldName": "Invoice"},
+        {"FieldName": "Invoicedate"},
+        {"FieldName": "Invoiceamount"},
+        {"FieldName": "Paidamount"},
+        {"FieldName": "Paymentdate"},
+        {"FieldName": "Oustanding"},
+        {"FieldName": "Shipmentperiod"},
+        {"FieldName": "Contractstatus"},
+        {"FieldName": "Status"},
+        {"FieldName": "GRNNumber"}
+    ],
+    "Messages":
+    {
+        "NetworkError":"Network Connection Fail to Cloud server , Please Contact Network Team",
+        "Data":"System connection to data on ETG cloud server 'etgserver1' is not currently available.  Please refresh/relogin later.  If the problem persists, contact customer support",
+        "PurchaseData":"Purchase Contracts Not Exist",
+        "CreateMsg":"There are an issue in the Data to be inserted to System, Please Contact IT Dep",
+        "MatrixCountry":"Country Not Exist in the Import Matrix Or there is no destination country assigned to the contract",
+        "User":"Wrong User Name or User not Assigned to a Specific Team",
+        "Reset":"Please Contact IT Administrator to have a default password.",
+        "EmailMessage":"Email Was Sent Sucssefully",
+        "MissingData":"Sorry, You will not able to generate documentation due to This Contract/Split has missing data related to Shipment instruction Or Production Instruction, Or Booking Reference",
+        "MissingRailCar":"Sorry, You will not able to generate some documentation due to This Contract/Split has missing RailCars Mapping, please Map a proper railcar and containers as well first",
+        "MissingRailCars":"No Rail Cars Assigned to this Split.",
+        "ExistingData":"Data Already Exist",
+        "RailContainer":"This RailCar has container/s assigned, please delete them first and then delete the Railcar."
+    }
+}

@@ -1,0 +1,125 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            
+            <p-table #dt 
+            [columns]="cols" 
+            [rowsPerPageOptions]="[10, 25, 50]" 
+            [value]="rows" 
+            sortField="Contractnumber" 
+            sortMode="single" 
+            [rows]="15" 
+            [paginator]="true"
+                rowGroupMode="subheader" 
+                groupRowsBy="Name" 
+                [scrollable]="true" 
+                [(selection)]="selectedSplit"
+                [tableStyle]="{'min-width': '50rem'}" 
+                scrollHeight="750px" 
+                styleClass="p-datatable-gridlines" 
+                [globalFilterFields]="cols"
+                [scrollable]="true"
+                scrollHeight="1000px"
+                frozenWidth="200px"
+                responsiveLayout="scroll"
+                sortField="DoxCutoff">
+                
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                        <h2 class="m-0 text-blue-800">Dump Data Screen</h2>                        
+                        <!-- <button pbutton label="clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button> -->
+                        <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                       
+                        <ng-container *ngFor="let col of columns">
+                            <th pSortableColumn={{col}}><p-sortIcon></p-sortIcon>{{'TableHeaders.vw_DumpFile.' + col | translate}}</th>
+                        </ng-container>
+                        
+                    </tr>
+                    <!-- <tr>
+                        <th></th>
+                        <th><p-columnfilter type="date" field="doxcutoff" display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="date" field="contractdate" display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="text" field="splitno" display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="text" field="custname" display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="numeric" field="quantity" display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="numeric" field="price" display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="numeric" field="amount"  display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="date" field="deliveryfromdate" display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="date" field="deliverytodate" display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="text" field="bookingref"  display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="text" field="destination" display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="text" field="portname" display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="text" field="blno" display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="date" field="bldate" display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="text" field="deliveryterms" display="menu"></p-columnfilter></th>
+                        <th><p-columnfilter type="text" field="owner" display="menu"></p-columnfilter></th>
+                         -->
+                        <!-- <th> 
+                            <button type="button" pbutton pripple icon="pi pi-file-excel" (click)="exportexcel()" class="p-button-success mr-2" ptooltip="xls" tooltipposition="bottom"></button>
+                        </th>
+                      
+                       </tr> -->
+                </ng-template>
+                <!-- <ng-template ptemplate="groupheader" let-rowdata>
+                    <tr prowgroupheader>
+                        <td colspan="20">
+                            <span *ngfor="let comimage of commodities"> 
+                                <span *ngif="comimage.id==rowdata.commodityid"> <img [alt]="rowdata.name" [src]="comimage.commodityimg" width="32" style="vertical-align: middle" /></span>
+                            </span> ||
+                            <span class="font-bold ml-2">{{rowdata.name}}</span>
+                            <span class="font-bold ml-2">{{rowdata.contractnumber}}</span> 
+                        </td>
+                    </tr>
+                </ng-template> -->
+                <ng-template pTemplate="body" let-columns="columns" let-rowData let-rowIndex="rowIndex">
+                <tr>
+                    <ng-container *ngFor="let col of columns">
+                        <td *ngIf="col!='Contractdate' && col!='Deliveryfromdate' && col!='Deliverytodate' && col!='DoxCutoff' && col!='ETS' && col!='ETA' && col!='BLDate' && col!='Invoicedate' &&  col!='Paymentdate' &&col!='BLDraftReceived'&&col!='Appropriation'&&col!='BLApproval'&&col!='OBLReceived'&&col!='WQDraftReceived'&&col!='WQrequest'&&col!='Phytorequest'&&col!='PhytoDraftReceived'&&col!='OriginalWQReceived'&&col!='OriginalPhytoReceive'&&col!='COODraftReceived'&&col!='COOPhytoReceived'&&col!='DraftSentApproval'&&col!='Draftsapproved'&&col!='OriginalsCouriered'">
+                            <div>{{rowData[col]}}</div>
+                            
+                        </td>
+                        <td *ngIf="col==='Contractdate' ||col==='Deliveryfromdate'||col==='Deliverytodate'||col==='DoxCutoff'||col==='ETS'||col==='ETA'||col==='BLDate'||col==='Invoicedate'|| col==='Paymentdate' || col==='BLDraftReceived'|| col==='Appropriation'|| col==='BLApproval'||col==='OBLReceived'||col==='WQDraftReceived'||col==='WQrequest'||col==='Phytorequest'||col==='PhytoDraftReceived'||col==='OriginalWQReceived'||col==='OriginalPhytoReceived'||col==='COODraftReceived'||col==='COOPhytoReceived'||col==='DraftSentApproval'||col==='Draftsapproved'||col==='OriginalsCouriered'">
+                            <div>{{rowData[col] | date}}</div>
+                            
+                        </td>
+                        <!-- <td *ngif="col==='image'">
+                            <div><img [src]="rowdata.image" style="width: 100px;height:70px;" [alt]="rowdata.name" class="shadow-4" /></div>
+                        </td> -->
+                    </ng-container>
+                                    
+                </tr>                
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{rows ? rows.length : 0 }} Record.
+                    </div>
+                </ng-template>
+            </p-table>
+            <p-dialog header="Documentation Assigned" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+                [draggable]="false" [resizable]="false">
+                <p class="flex align-items-center justify-content-between m-0 container text-2xl text-left text-blue-800">There Are No Splits Assigned to You, Please Contact Documentation Leader</p>
+                    <ng-template pTemplate="footer">
+                        <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+                    </ng-template>
+            </p-dialog>         
+        </div>
+    </div>
+    
+</div>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing The request.</i>
+</p-blockUI>
+    <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+    <p-messages [enableService]="true"></p-messages>1
+    <p-toast key="toast01" position="top-right"></p-toast>

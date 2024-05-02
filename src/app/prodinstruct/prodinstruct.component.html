@@ -1,0 +1,236 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-toolbar styleClass="mb-2">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="Add" icon="pi pi-plus" class="p-button-success mr-2" (click)="addinstruct()"></button>
+                    <!-- <button pButton pRipple label="Update " icon="pi pi-file-edit" class="p-button-secondary mr-2" (click)="Updateinstruct()"></button> -->
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+                </ng-template>
+            </p-toolbar>
+        <p-table #dt 
+        [columns]="cols"
+        [rows]="35" 
+        [paginator]="true"
+        [rowsPerPageOptions]="[10, 25, 35, 50]" 
+        [value]="PrdIns" 
+        dataKey="id" 
+        [tableStyle]="{'min-width': '100rem'}" 
+        [rowSelectable]="isRowSelectable"  
+        selectionMode="single" 
+        [(selection)]="selectedInstruction"
+        (onRowSelect)="onRowSelect($event)" 
+        (onRowUnselect)="onRowUnselect($event)" 
+        styleClass="p-datatable-gridlines" 
+        [globalFilterFields]="cols"
+        [scrollable]="true"
+        scrollHeight="950px"
+        frozenWidth="200px"
+        responsiveLayout="scroll">
+
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <span class="p-input-icon-right">
+                    <i class="pi pi-search"></i>
+                    <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                </span>
+           
+                <h2 class="m-1 text-blue-800">Manage Production Instruction</h2>
+                
+                <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
+            </div>
+        </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <!--<th>
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>-->
+                            <th>Grain Week</th>
+                            <th>Plant</th>
+                            <th>Commodity</th>
+                            <th>Variety</th>
+                            <th>Transloader</th>
+                            <th>Package Type</th>
+                            <th>Bags Number</th>
+                            <th>Unit Number</th>
+                            <th>Total Unit Number</th>
+                            <th>Pallet Dimensions</th>
+                            <th>Pallet Stack</th>
+                            <th>Created On</th>
+                            <th>Modified On</th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th><p-columnFilter type="text" field="PlantName"  display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="text" field="Name"  display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="text" field="variety" display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="text" field="TransName"  display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="text" field="bagname"  display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="numeric" field="BagsNum"  display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="numeric" field="UnitNum"  display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="numeric" field="TotalMT"  display="menu"></p-columnFilter></th>
+                            <th></th>
+                            <th></th>
+                            <th><p-columnFilter type="date" field="createdon" display="menu"></p-columnFilter></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <!-- <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td> -->
+                        <td>{{rowData.GWName}}</td>
+                        <td>{{rowData.PlantName}}</td>
+                        <td>{{rowData.Name}}</td>
+                        <td>{{rowData.variety}}</td>
+                        <td>{{rowData.TransName}}</td>
+                        <td>{{rowData.bagname}}</td>
+                        <td>{{rowData.BagsNum}}</td>
+                        <td>{{rowData.UnitNum}}</td>
+                        <td>{{rowData.TotalMT | number:'1.1-3'}}</td>
+                        <td>{{rowData.Pallet}}</td>
+                        <td>{{rowData.PalletStack}}</td>
+                        <td>{{rowData.createdon | date}}</td>
+                        <td>{{rowData.modifiedon | date}}</td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editinstruction(rowData)" pTooltip="Edit Row for update" tooltipPosition="top" tooltipEvent="hover"></button>
+                            <button pButton pRipple icon="pi pi-clone" class="p-button-rounded p-button-secondary mr-2" (click)="onRowcloneInit(rowData)" pTooltip="Clone Row" tooltipPosition="top" tooltipEvent="hover"></button>
+
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedins(rowData)" pTooltip="Delete Row" tooltipPosition="top" tooltipEvent="hover"></button>
+                        </td>
+                    <!-- <td>
+                        <button type="button" pButton icon="pi pi-search" (click)="selectUsr(Prd)"></button>
+                    </td> -->
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="flex align-items-center justify-content-between">
+                    In total there are {{PrdIns ? PrdIns.length : 0 }} Instructions.
+                </div>
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="card">           
+        <p-dialog [(visible)]="addNewDialogue" [style]="{width: '1400px'}" header="Production Instruction Details" [modal]="true" styleClass="p-fluid" (onShow)="filtervarietybycommodity(PrdIn.Commodityid)">
+            <ng-template pTemplate="content">
+                <div class="grid"> 
+                    <div class="field col-1 col-offset-0">
+                        <label for="id">ID</label>
+                        <input type="text" pInputText id="id" [(ngModel)]="PrdIn.id" disabled />
+                    </div>
+                    <div class="field col-2 col-offset-0">
+                        <label for="Gw">Grain Week</label>
+                        <p-dropdown appendTo="body" [options]="Gw" [(ngModel)]="PrdIn.Gw" optionLabel="GW" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                        <small class="p-error" *ngIf="submitted && !PrdIn.Gw">Grain Week is required.</small>
+
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="Plant">Plant</label>
+                        <p-dropdown appendTo="body" [options]="Plants" [(ngModel)]="PrdIn.Plant" optionLabel="Plant" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>                            
+                        <small class="p-error" *ngIf="submitted && !PrdIn.Plant">Plant is required.</small>
+
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="Commodityid">Commodity</label>
+                        <p-dropdown appendTo="body" [options]="Commrows" [(ngModel)]="PrdIn.Commodityid" optionLabel="Name" optionValue="id"  [filter]="true" filterBy="Name" (onChange)="filtervarietybycommodity(PrdIn.Commodityid)" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                        <small class="p-error" *ngIf="submitted && !PrdIn.Commodityid">Commodity is required.</small>
+                    </div>
+                    <div class="field col-2 col-offset-0">
+                        <label for="varietyid">Variety</label>
+                        <p-dropdown appendTo="body" [options]="filteredvariety" [(ngModel)]="PrdIn.varietyid" optionLabel="variety" optionValue="id"  [filter]="true" filterBy="variety" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-2 col-offset-0">
+                        <label for="Grade">Grade</label>
+                        <p-dropdown appendTo="body" [options]="graderows" [(ngModel)]="PrdIn.Gradeid" optionLabel="Grade" optionValue="id"  [filter]="true" filterBy="Grade" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                                       
+                    <div class="field col-3 col-offset-0">
+                        <label for="Transloader">Transloader</label>
+                        <p-dropdown appendTo="body" [options]="Transloaders" [(ngModel)]="PrdIn.Transloaderid" optionLabel="TransName" optionValue="id" [editable]="false" [filter]="true" filterBy="TransName" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="Portid">Port</label>
+                        <p-dropdown appendTo="body" [options]="Portsrows" [(ngModel)]="PrdIn.Portid" optionLabel="PortName" optionValue="id"  [filter]="true" filterBy="PortName" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="countryid">Country</label>
+                        <p-dropdown appendTo="body" [options]="countriesrows" [(ngModel)]="PrdIn.countryid" optionLabel="Name" optionValue="id"  [filter]="true" filterBy="Name" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="UnitType">Unit Type</label>
+                        <p-dropdown appendTo="body" [options]="Railobjs" [(ngModel)]="PrdIn.UnitType" optionLabel="TypeName" optionValue="id"  [filter]="true" filterBy="TypeName" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+
+                    <p-divider class="field col-12 col-offset-0">Calculate MT Units</p-divider>
+                   
+                    <div class="field col-3 col-offset-0">
+                        <label for="UnitNum">Units Numbers</label>
+                        <p-inputNumber [(ngModel)]="PrdIn.UnitNum" mode="decimal" [min]="1" [max]="100000" [showButtons]="true" [step]="1"
+                        decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" (onBlur)="CalcMT(PrdIn.pkgid)"></p-inputNumber></div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="BagsNum">Number of Bags</label>
+                        <p-inputNumber [(ngModel)]="PrdIn.BagsNum" inputId="minmax" mode="decimal" [min]="1" [max]="100000" [showButtons]="true" [step]="1"
+                        decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" (onBlur)="CalcMT(PrdIn.pkgid)"></p-inputNumber>
+                    </div>
+                    
+                    <div class="field col-3 col-offset-0">
+                        <label for="pkgid">Package</label>
+                        <p-dropdown appendTo="body" [options]="pkgrows" (onChange)="CalcMT(PrdIn.pkgid)" [(ngModel)]="PrdIn.pkgid" optionLabel="bagname" optionValue="id" [filter]="true" filterBy="bagname" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-2 col-offset-0">
+                        <label for="TotalMT">Total MT</label>
+                        <p-inputNumber inputId="TotalMT" mode="decimal" [(ngModel)]="PrdIn.TotalMT" (onBlur)="CalcMTTimes(PrdIn.pkgid)"></p-inputNumber>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="CFIA">CFIA</label>
+                        <p-dropdown appendTo="body" [options]="CFIA" [(ngModel)]="PrdIn.CFIA" optionLabel="CFIA" optionValue="id"  [filter]="true" filterBy="CFIA" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="SGS">Quality Inspection</label>
+                        <p-dropdown appendTo="body" [options]="SGS" [(ngModel)]="PrdIn.SGS" optionLabel="SGS" optionValue="id"  [filter]="true" filterBy="SGS" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="Supervision">Supervision</label>
+                        <p-dropdown appendTo="body" [options]="Supervision" [(ngModel)]="PrdIn.Supervision" optionLabel="Supervision" optionValue="id"  [filter]="true" filterBy="Supervision" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-2 col-offset-0">
+                        <label for="B13Date">Pallet Dimensions</label>
+                        <p-dropdown appendTo="body" [options]="palldirows" [(ngModel)]="PrdIn.palldiid" optionLabel="Pallet" optionValue="id"  [filter]="true" filterBy="Pallet" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="B13Value">Pallet Stack</label>
+                        <p-dropdown appendTo="body" [options]="pallstackrows" [(ngModel)]="PrdIn.pallstackid" optionLabel="PalletStack" optionValue="id"  [filter]="true" filterBy="PalletStack" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="Tags">Tags</label>
+                        <p-dropdown appendTo="body" [options]="Tags" [(ngModel)]="PrdIn.Tags" optionLabel="Tag" optionValue="id"  [filter]="true" filterBy="Tag" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-2 col-offset-0">
+                        <label for="Crop">Crop Year</label>
+                        <p-dropdown appendTo="body" [options]="crop" [(ngModel)]="PrdIn.Crop" optionLabel="CropYear" optionValue="id"  [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-12 col-offset-0">
+                        <label for="Load">Instructions</label>
+                        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="PrdIn.Loadinstructions"></textarea>
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="onRowSave()"></button>
+            </ng-template>
+    </p-dialog> 
+</div>
+</div>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

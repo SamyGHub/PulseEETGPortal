@@ -1,0 +1,305 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-dialog header="System Message" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+            [draggable]="false" [resizable]="false">
+               <p class="flex align-items-center justify-content-between">{{dialougmessage}}</p>
+               <ng-template pTemplate="footer">
+                   <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+               </ng-template>
+           </p-dialog>  
+            <p-toolbar styleClass="mb-2">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="Add" icon="pi pi-plus" class="p-button-success mr-2" (click)="addRailCar()"></button>
+                    <!-- <button pButton pRipple label="Update " icon="pi pi-file-edit" class="p-button-secondary mr-2" (click)="Updateinstruct()"></button> -->
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+                </ng-template>
+            </p-toolbar>
+        <p-table #dt 
+        [columns]="cols" 
+        [value]="rows" 
+        [reorderableColumns]="true" 
+        [rowsPerPageOptions]="[10, 25, 50]" 
+        [rows]="10" 
+        [paginator]="true" 
+        [globalFilterFields]= "cols" 
+            [(selection)]="selectedRails" 
+            [rowHover]="true" 
+            dataKey="id"
+            rowGroupMode="subheader" 
+            groupRowsBy="Name" 
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" 
+            [showCurrentPageReport]="true" 
+            styleClass="p-datatable-gridlines"
+            [scrollable]="true"
+            scrollHeight="900px"
+            frozenWidth="200px"
+            responsiveLayout="scroll">
+
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <span class="p-input-icon-right">
+                    <i class="pi pi-search"></i>
+                    <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                </span>
+                <h2 class="m-0">Manage RailCars</h2>
+                <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
+            </div>
+        </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th>
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                            <th hidden>ID</th>
+                            <th>Car Number</th>
+                            <th>Ship Date</th>
+                            <th>Lading Number</th>
+                            <th>Plant</th>
+                            <!-- <th>Ship to info</th>
+                            <th>Commodity</th> -->
+                            <th>Variety</th>
+                            <th>Grade</th>
+                            <th>Package Name</th>
+                            <th>Shipped Quantity</th>
+                            <th>Unload Weight</th>
+                            <th>Remaining Weight</th>
+                            <th>Transloader Name</th>
+                            <th>Contract Number</th>
+                            <th>Purchase Contract</th>
+                            <th>CreatedBy</th>
+                            <th>Created On</th>
+                            <th>ModifiedBy</th>
+                            <th>Modified On</th>
+                            
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            
+                            <th></th>
+                            <th><p-columnFilter type="text" field="carnumber"  display="menu"></p-columnFilter></th>
+                            <th>
+                                <p-columnFilter type="date" field="shipdate" display="menu">
+                                            
+                                </p-columnFilter>
+                            </th>
+                            <th>
+                                <p-columnFilter type="text" field="ladingnum" display="menu"></p-columnFilter>
+                                <!-- <p-columnFilter field="CustName" [matchMode]="'custom-equals'" [showMenu]="true">
+                                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                        <p-multiSelect appendTo="body" [ngModel]="value" [options]="custfilter" placeholder="Any" (onChange)="filter($event.value)" optionLabel="CustName">
+                                            <ng-template let-option pTemplate="item">
+                                                <div class="inline-block vertical-align-middle">
+                                                    <span class="ml-1 mt-1">{{ option.CustName }}</span>
+                                                </div>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </ng-template>
+                                </p-columnFilter> -->
+                            </th>
+                            <th><p-columnFilter type="text" field="Plant" display="menu"></p-columnFilter></th>
+                            <!-- <th><p-columnFilter type="text" field="shiptoinfo" display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="text" field="Name" display="menu"></p-columnFilter></th> -->
+                            <th><p-columnFilter type="text" field="variety" display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="text" field="Grade" display="menu"></p-columnFilter></th>
+                            
+                            <th><p-columnFilter type="text" field="bagname" display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="numeric" field="shippedqty" display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="numeric" field="UnloadWeight" display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="numeric" field="WeightRemaining" display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="text" field="TransName" display="menu"></p-columnFilter></th>
+                            <th><p-columnFilter type="text" field="Contractnumber" display="menu"></p-columnFilter></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                           </tr>
+                </ng-template>
+                <ng-template pTemplate="groupheader" let-rowData>
+                    <tr pRowGroupHeader>
+                        <td colspan="18">
+                            <span *ngFor="let comimage of commodities">
+                                <span *ngIf="comimage.id==rowData.productno"> <img [alt]="rowData.Name" [src]="comimage.Commodityimg" width="32" style="vertical-align: middle" /></span>
+                            </span>
+                            <span class="font-bold ml-2">{{rowData.Name}}</span>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <td hidden>{{rowData.id}}</td>
+
+                        <td>{{rowData.carnumber}}</td>
+                        
+                        <td>{{rowData.shipdate | date}}</td>
+                        
+                        <td>{{rowData.ladingnum}}</td>
+                        
+                        <td>{{rowData.Plant}}</td>
+                        
+                        <!-- <td>{{rowData.shiptoinfo}}</td>
+                        
+                        <td>{{rowData.Name}}</td> -->
+                        
+                        <td>{{rowData.variety}}</td>
+                        
+                        <td>{{rowData.Grade}}</td>
+                        
+                        <td>{{rowData.bagname}}</td>
+                        <td>{{rowData.shippedqty | number:'1.1-3'}}</td>
+                        <td>{{rowData.UnloadWeight | number:'1.1-3'}}</td>
+                        <td>{{rowData.WeightRemaining | number:'1.1-3'}}</td>
+                        <td>{{rowData.transloaderid}}</td>
+                        <td>{{rowData.RoutingInfo}}</td>
+                        <td>{{rowData.Contractnumber}}</td>
+                        <td>{{rowData.CUNAME}}</td>
+                        <td>{{rowData.createdon | date}}</td>
+                        <td>{{rowData.MUNAME}}</td>
+                        <td>{{rowData.modifiedon | date}}</td>
+                        
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editrail(rowData)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteRail(rowData)"></button>
+                        </td>
+                    <!-- <td>
+                        <button type="button" pButton icon="pi pi-search" (click)="selectUsr(Prd)"></button>
+                    </td> -->
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="flex align-items-center justify-content-between">
+                    In total there are {{rows ? rows.length : 0 }} Railcars.
+                </div>
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="card">           
+        <p-dialog [(visible)]="addNewDialogue" [style]="{width: '1400px'}" header="RailCars Details" [modal]="true" styleClass="p-fluid" (onShow)="filtervarietybycommodity(railcar.productno)">
+            <ng-template pTemplate="content">
+                <div class="grid"> 
+                    <div class="field col-1 col-offset-0">
+                        <label for="id">ID</label>
+                        <input type="text" pInputText id="id" [(ngModel)]="railcar.id" disabled />
+                    </div>
+                    <div class="field col-2 col-offset-0">
+                        <label for="carnumber">Car Number</label>
+                        <input type="text" pInputText id="carnumber" [(ngModel)]="railcar.carnumber" />
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="shipdate">Ship Date</label>
+                        <p-calendar [(ngModel)]="railcar.shipdate" [showIcon]="true"></p-calendar>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="ladingnum">ladingnum</label>
+                        <input type="text" pInputText id="ladingnum" [(ngModel)]="railcar.ladingnum" />
+                    </div>
+                    <div class="field col-2 col-offset-0">
+                        <label for="Plants">Plants</label>
+                        <p-dropdown appendTo="body" [options]="Plants" [(ngModel)]="railcar.Plantid" optionLabel="Plant" optionValue="id"  [filter]="true" filterBy="Plant" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-2 col-offset-0">
+                        <label for="shiptoinfo">shiptoinfo</label>
+                        <input type="text" pInputText id="shiptoinfo" [(ngModel)]="railcar.shiptoinfo" />
+                    </div>
+                                       
+                    <div class="field col-3 col-offset-0">
+                        <label for="productno">Commodity</label>
+                        <p-dropdown appendTo="body" [options]="Commrows" [(ngModel)]="railcar.productno" optionLabel="Name" optionValue="id"  [filter]="true" filterBy="Name" [showClear]="true" placeholder="Select Value" (onChange)="filtervarietybycommodity(railcar.productno)"></p-dropdown>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="varietyid">Variety</label>
+                        <p-dropdown appendTo="body" [options]="filteredvariety" [(ngModel)]="railcar.varietyid" optionLabel="variety" optionValue="id" [filter]="true" filterBy="variety" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="gradeid">Grade</label>
+                        <p-dropdown appendTo="body" [options]="graderows" [(ngModel)]="railcar.gradeid" optionLabel="Grade" optionValue="id" [filter]="true" filterBy="variety" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="bagname">bag name</label>
+                        <p-dropdown appendTo="body" [options]="pkgrows" [(ngModel)]="railcar.pkunitcode" optionLabel="bagname" optionValue="id" [editable]="true" [filter]="true" filterBy="bagname" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="shippedqty">Shipped Quantity</label>
+                        <input type="text" pInputText id="shippedqty" [(ngModel)]="railcar.shippedqty" />
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="TransName">Transloader Name</label>
+                        <p-dropdown appendTo="body" [options]="Transloaders" [(ngModel)]="railcar.transloaderid" optionLabel="TransName" optionValue="id" [editable]="true" [filter]="true" filterBy="TransName" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+
+                    <div class="field col-3 col-offset-0">
+                        <label for="Origin">Origin</label>
+                        <p-dropdown appendTo="body" [options]="Origin" [(ngModel)]="railcar.originid" optionLabel="Origin" optionValue="id" [editable]="true" [filter]="true" filterBy="Origin" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="CarrierName">CarrierName</label>
+                        <input type="text" pInputText id="CarrierName" [(ngModel)]="railcar.CarrierName" />
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="BinNumber">BinNumber</label>
+                        <input type="text" pInputText id="BinNumber" [(ngModel)]="railcar.BinNumber" />
+                    </div>
+                    <div class="field col-3 col-offset-0">
+                        <label for="ShipUnitDesc">ShipUnitDesc</label>
+                        <input type="text" pInputText id="ShipUnitDesc" [(ngModel)]="railcar.ShipUnitDesc" />
+                    </div>
+                    <div class="field col-5 col-offset-0">
+                        <label for="ShipUnitDesc">Purchase Contract Assigned.</label>
+                        <p-toast></p-toast>
+                        <p-button (click)="popu.toggle($event)" icon="pi pi-search" class="col-6"></p-button>
+                        <div *ngIf="!selectedpu.length" class="col-4">
+                            <div *ngFor="let item of Purchases">
+                                <span *ngIf="item.id==railcar.Purchaseid">{{item.Contractnumber}}</span>
+                            </div>
+                        </div>
+                        <div *ngIf="selectedpu.lenght" class="col-4">
+                            <div class="flex align-items-center justify-content-between mt-3 mb-2">
+                                <span class="text-900 font-medium text-xl">{{selectedpu.id}}</span>
+                                <span class="text-900 text-xl ml-3">{{selectedpu.Contractnumber}}</span>
+                            </div>
+                        </div>
+                        <p-overlayPanel #popu [style]="{'width': '650px'}" [showCloseIcon]="true" (onHide)="setPurchaseValueFromService()" (onShow) = "clearValueOnService()">
+                            <ng-template pTemplate="content">
+                                <p-table [value]="Purchases" selectionMode="single" [(selection)]="selectedpu" (onRowSelect)="onRowpuOVSelect($event, popu, railcar)" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th pSortableColumn="id">ID<p-sortIcon field="id"></p-sortIcon></th>
+                                            <th pSortableColumn="Contractnumber">Contract Number<p-sortIcon field="Contractnumber"></p-sortIcon></th>
+                                            <th pSortableColumn="Quantity">Contract Quantity<p-sortIcon field="Quantity"></p-sortIcon></th>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                        <ng-template pTemplate="body" let-rowData let-product>
+                                            <tr [pSelectableRow]="rowData">
+                                                <td>{{product.id}}</td>
+                                                <td>{{product.Contractnumber}}</td>
+                                                <td>{{product.Remaining | number:'1.1-3'}}</td>              
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </ng-template>
+                            </p-overlayPanel>
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="onRowSave()"></button>
+            </ng-template>
+    </p-dialog> 
+</div>
+</div>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

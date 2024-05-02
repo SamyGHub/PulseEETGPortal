@@ -1,0 +1,470 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-dialog header="Network Issue" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+                [draggable]="false" [resizable]="false">
+                <p class="flex align-items-center justify-content-between">{{dialougmessage}}</p>
+                <ng-template pTemplate="footer">
+                    <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+                </ng-template>
+            </p-dialog>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <!-- <button pButton pRipple label="Add Booking" icon="pi pi-plus" class="p-button-success mr-2" (click)="addBook()"></button> -->
+                    <button pButton pRipple label="Add New Booking" icon="pi pi-plus" class="p-button-success mr-2" (click)="addBookpopup()"></button>
+                    <button pButton pRipple label="Bulk Update Table" icon="pi pi-file-edit" class="p-button-secondary mr-2" (click)="Updateinstruct()"></button>
+                    <p-button *ngIf="selectedBooking" (click)="opendialog()" pRipple label="Attachements" icon="pi pi-file-edit" class="p-button-primary mr-2" badge={{ATTCount[0]?.ATT}}></p-button>
+                
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+                </ng-template>
+                
+            </p-toolbar>
+                    <p-table #dt 
+                    [columns]="cols" 
+                    [value]="books" 
+                    dataKey="id"
+                    [rows]="35"
+                    [paginator]="true" 
+                    [tableStyle]="{'min-width': '30rem'}" 
+                    selectionMode="single" 
+                    [(selection)]="selectedBooking"  
+                    [rowSelectable]="isRowSelectable" 
+                    [rowsPerPageOptions]="[10, 25, 35, 50]"
+                    (onRowSelect)="onRowSelect($event)" 
+                    (onRowUnselect)="onRowUnselect($event)" 
+                    styleClass="p-datatable-gridlines" 
+                    [globalFilterFields]= "['BookingRef','VesselName','PortName','VoyageNum','UName','SplitNo']"
+                    [scrollable]="true"
+                    scrollHeight="900px"
+                    frozenWidth="200px"
+                    responsiveLayout="scroll">
+                    
+                    <ng-template pTemplate="caption">
+                        <div class="flex align-items-center justify-content-between">
+                            <span class="p-input-icon-right">
+                                <i class="pi pi-search"></i>
+                                <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                            </span>
+                            <h2 class="m-0 text-blue-800">Manage Booking Instructions</h2>
+                            <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th>Select</th>
+                                <ng-container *ngFor="let col of columns">
+                                    <th *ngIf="col!=='id' && col!=='createdby' && col!=='createdon' && col!=='modifiedby' && col!=='modifiedon' && col!=='SplitNum'" pSortableColumn={{col}}><p-sortIcon></p-sortIcon>{{'TableHeaders.Wrx_ShipBooking.' + col | translate}}</th>
+                                </ng-container>
+                                <th>Action</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th><p-columnFilter type="text" field="BookingRef"  display="menu"></p-columnFilter></th>
+                                <th><p-columnFilter type="text" field="ShippingLine"  display="menu"></p-columnFilter></th>
+                                <th><p-columnFilter type="text" field="DischargePort"  display="menu"></p-columnFilter></th>
+                                <th><p-columnFilter type="text" field="PortName"  display="menu"></p-columnFilter></th>
+                                <th><p-columnFilter type="numeric" field="FCLNum" display="menu"></p-columnFilter></th>
+                                <th><p-columnFilter type="date" field="DoxCutoff" display="menu"></p-columnFilter></th>
+                                <th><p-columnFilter type="date" field="VGMCutoff" display="menu"></p-columnFilter></th>
+                                <th><p-columnFilter type="date" field="ERD" display="menu"></p-columnFilter></th>
+                                <th><p-columnFilter type="date" field="LRD" display="menu"></p-columnFilter></th>
+                                <th><p-columnFilter type="date" field="ETS" display="menu"></p-columnFilter></th>
+                                <th><p-columnFilter type="date" field="ETA" display="menu"></p-columnFilter></th>
+                                <th></th>
+                                <th><p-columnFilter type="numeric" field="NoFreedays" display="menu"></p-columnFilter></th>
+                                <th><p-columnFilter type="numeric" field="FreightValue" display="menu"></p-columnFilter></th>
+                                <th></th>
+                                <th><p-columnFilter type="text" field="VesselName"  display="menu"></p-columnFilter></th>
+                                <th><p-columnFilter type="text" field="VoyageNum"  display="menu"></p-columnFilter></th>
+                                <th><p-columnFilter type="text" field="UName"  display="menu"></p-columnFilter></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </ng-template>
+                        
+                        <ng-template pTemplate="body" let-book let-editing="editing" let-rowIndex="rowIndex">
+                            <tr [pSelectableRow]="book" [pSelectableRowIndex]="rowIndex" pTooltip="Select Row for Update" tooltipPosition="top" tooltipEvent="hover">
+                               
+                                <td>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="output">
+                                           <div> <span class="pi pi-arrow-up-right"></span></div>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <!-- <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="book.BookingRef" [style]="{'width':'80px'}" >
+                                        </ng-template> -->
+                                        <ng-template pTemplate="output">
+                                            {{book.BookingRef}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <!--Shipping Line-->
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <!-- <ng-template pTemplate="input">
+                                            <span class="p-float-label">
+                                                <p-dropdown appendTo="body" [options]="Lines" [(ngModel)]="book.ShippingLine" optionLabel="LineName" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                            </span>    
+                                        </ng-template> -->
+                                        <ng-template pTemplate="output">
+                                            <div *ngFor="let item of Lines">
+                                                <span *ngIf="item.id==book.ShippingLine">{{item.LineName}}</span>
+                                            </div>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <!-- <ng-template pTemplate="input">
+                                            <span class="p-float-label">
+                                                <p-dropdown appendTo="body" [options]="Dischargeportsrows" [(ngModel)]="book.DischargePort" optionLabel="PortName" optionValue="id" [filter]="true" filterBy="PortName" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                            </span>    
+                                        </ng-template> -->
+                                        <ng-template pTemplate="output">
+                                            <div *ngFor="let item of Dischargeportsrows">
+                                                <span *ngIf="item.id==book.DischargePort">{{item.PortName}}</span>
+                                            </div>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <!-- <ng-template pTemplate="input">
+                                            <span class="p-float-label">
+                                                <p-dropdown appendTo="body" [options]="countriesrows" [(ngModel)]="book.countryid" optionLabel="PortName" optionValue="id"  [filter]="true" filterBy="PortName" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                            </span>    
+                                        </ng-template> -->
+                                        <ng-template pTemplate="output">
+                                            <div *ngFor="let item of countriesrows">
+                                                <span *ngIf="item.id==book.countryid">{{item.PortName}}</span>
+                                            </div>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <!-- <ng-template pTemplate="input">
+                                            <!-- <input pInputText type="text" [(ngModel)]="book.FCLNum" [style]="{'width':'80px'}" required> 
+                                            <p-inputNumber [(ngModel)]="book.FCLNum" inputId="minmax" inputId="minmax" mode="decimal" [min]="1" [max]="1000" [showButtons]="true" buttonLayout="horizontal" spinnerMode="horizontal" [step]="1"
+                                            decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
+                                        </ng-template> -->
+                                        <ng-template pTemplate="output">
+                                            {{book.FCLNum}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-calendar appendTo="body" [(ngModel)]="book.DoxCutoff" [readonlyInput]="true" dateFormat="dd.mm.yy" [style]="{'width':'80px'}"></p-calendar>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{book.DoxCutoff | date}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-calendar appendTo="body" [(ngModel)]="book.VGMCutoff" [readonlyInput]="true" dateFormat="dd.mm.yy" [style]="{'width':'80px'}"></p-calendar>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{book.VGMCutoff | date}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-calendar appendTo="body" [(ngModel)]="book.ERD"  [readonlyInput]="true" dateFormat="dd.mm.yy" [style]="{'width':'80px'}"></p-calendar>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{book.ERD | date}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-calendar appendTo="body" [(ngModel)]="book.LRD"  [readonlyInput]="true" dateFormat="dd.mm.yy" [style]="{'width':'80px'}"></p-calendar>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{book.LRD | date}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-calendar appendTo="body" [(ngModel)]="book.ETS"  [readonlyInput]="true" dateFormat="dd.mm.yy" [style]="{'width':'80px'}"></p-calendar>
+
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{book.ETS | date}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-calendar appendTo="body" [(ngModel)]="book.ETA"  [readonlyInput]="true" dateFormat="dd.mm.yy" [style]="{'width':'80px'}"></p-calendar>
+
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{book.ETA | date}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <!-- <ng-template pTemplate="input">
+                                            <span class="p-float-label">
+                                                <p-dropdown appendTo="body" [options]="DTH" [(ngModel)]="book.DTH" optionLabel="name" optionValue="code" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                            </span>    
+                                        </ng-template> -->
+                                        <ng-template pTemplate="output">
+                                            <div *ngFor="let item of DTH">
+                                                <span *ngIf="item.code==book.DTH">{{item.name}}</span>
+                                            </div>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <!-- <ng-template pTemplate="input">
+                                            <!-- <input pInputText type="text" [(ngModel)]="book.FCLNum" [style]="{'width':'80px'}" required> 
+                                            <p-inputNumber [(ngModel)]="book.NoFreedays" inputId="minmax" mode="decimal" [min]="1" [max]="1000" [showButtons]="true" [step]="1"
+                                            decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
+                                        </ng-template> -->
+                                        <ng-template pTemplate="output">
+                                            {{book.NoFreedays}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <!-- <ng-template pTemplate="input">
+                                            <!-- <input pInputText type="text" [(ngModel)]="book.FCLNum" [style]="{'width':'80px'}" required> 
+                                            <p-inputNumber [(ngModel)]="book.FreightValue" inputId="minmax" mode="decimal" [min]="1" [max]="20000" [showButtons]="true"  [step]="1"
+                                            decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
+                                        </ng-template> -->
+                                        <ng-template pTemplate="output">
+                                            {{book.FreightValue}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <!-- <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="book.Comment" [style]="{'width':'80px'}">
+                                        </ng-template> -->
+                                        <ng-template pTemplate="output">
+                                            {{book.Comment}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <!-- <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="book.VesselName" [style]="{'width':'80px'}">
+                                        </ng-template> -->
+                                        <ng-template pTemplate="output">
+                                            {{book.VesselName}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <!-- <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="book.VoyageNum" [style]="{'width':'80px'}">
+                                        </ng-template> -->
+                                        <ng-template pTemplate="output">
+                                            {{book.VoyageNum}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <span class="p-float-label">
+                                                <p-dropdown inputId="float-label" appendTo="body" [options]="users" [(ngModel)]="book.ownerid" optionLabel="UName" optionValue="Uid" [filter]="true" filterBy="UName" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                                <!-- <label for="float-label">Select a User</label>-->
+                                            </span>    
+                                        </ng-template> 
+                                        <ng-template pTemplate="output">
+                                            <div *ngFor="let item of users">
+                                                <span *ngIf="item.Uid==book.ownerid">{{item.UName}}</span>
+                                            </div>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td>
+                                   <p-cellEditor>
+                                        <ng-template pTemplate="output">
+                                            <!-- <div *ngFor="let item of booksplits">
+                                                <p strong *ngIf="item.id==book.id" style="white-space:nowrap"><strong>{{item.SplitNo}}</strong></p>
+                                            </div> -->
+                                            <span>{{book.SplitNo}}</span>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td>
+                                    <div class="flex align-items-center justify-content-center gap-2">
+                                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="onRowEditInit(book)" pTooltip="Edit Row for Update" tooltipPosition="top" tooltipEvent="hover"></button>
+
+                                        <button pButton pRipple icon="pi pi-clone" class="p-button-rounded p-button-success mr-2" (click)="onRowcloneInit(book)" pTooltip="Clone Row" tooltipPosition="top" tooltipEvent="hover"></button>
+                                        <!-- <button *ngIf="!book.id" pButton pRipple type="button" icon="pi pi-check" (click)="onRowSave(book)" class="p-button-rounded p-button-text p-button-success mr-2"></button> -->
+                                        <!-- <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(shipinstruct, ri)" class="p-button-rounded p-button-text p-button-danger"></button> -->
+                                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedbook(book)" pTooltip="Delete Row" tooltipPosition="top" tooltipEvent="hover"></button>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="summary">
+                            <div class="flex align-items-center justify-content-between">
+                                In total there are {{books ? books.length : 0 }} Booking.
+                            </div>
+                        </ng-template>
+                    </p-table>
+                    <p-dialog [(visible)]="bookingDialogue" [style]="{width: '1400px'}" header="Booking Details" [modal]="true" styleClass="p-fluid">
+                        <ng-template pTemplate="content">
+                            <div class="grid"> 
+                                <div class="field col-2 col-offset-0">
+                                    <label for="BookingRef">Booking Reference</label>
+                                    <input type="text" pInputText id="BookingRef" [(ngModel)]="book.BookingRef" />
+                                    <small class="p-error" *ngIf="submitted && !book.BookingRef">Booking Reference is required.</small>
+                                </div>
+                                <div class="field col-4 col-offset-0">
+                                    <label for="ShippingLine">Shipping Line</label>
+                                    <p-dropdown appendTo="body" [options]="Lines" [(ngModel)]="book.ShippingLine" optionLabel="LineName" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="DischargePort">Discharge Port</label>
+                                    <p-dropdown appendTo="body" [options]="Dischargeportsrows" [(ngModel)]="book.DischargePort" optionLabel="PortName" optionValue="id" [filter]="true" filterBy="PortName" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                    <small class="p-error" *ngIf="submitted && !book.DischargePort">Discharge Port is required.</small>
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="countryid">Load Port</label>
+                                    <p-dropdown appendTo="body" [options]="countriesrows" [(ngModel)]="book.countryid" optionLabel="PortName" optionValue="id"  [filter]="true" filterBy="PortName" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                    <small class="p-error" *ngIf="submitted && !book.countryid">Destination is required.</small>
+                                </div>
+                                <div class="field col-2 col-offset-0">
+                                    <label for="FCLNum">FCL Number</label>
+                                    <p-inputNumber [(ngModel)]="book.FCLNum" inputId="minmax" inputId="minmax" mode="decimal" [min]="1" [max]="1000" [showButtons]="true" buttonLayout="horizontal" spinnerMode="horizontal" [step]="1"
+                                    decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>                                </div>
+                                
+                                <div class="field col-4 col-offset-0">
+                                    <label for="DoxCutoff">Document Cutoff Date</label>
+                                    <p-calendar appendTo="body" [(ngModel)]="book.DoxCutoff" [readonlyInput]="true" dateFormat="dd.mm.yy"></p-calendar>
+                                </div>
+                                                   
+                                <div class="field col-3 col-offset-0">
+                                    <label for="VGMCutoff">VGM Cut Off Date</label>
+                                    <p-calendar appendTo="body" [(ngModel)]="book.VGMCutoff" [readonlyInput]="true" dateFormat="dd.mm.yy"></p-calendar>
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="ERD">ERD Date</label>
+                                    <p-calendar appendTo="body" [(ngModel)]="book.ERD"  [readonlyInput]="true" dateFormat="dd.mm.yy" ></p-calendar>
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="LRD">LRD</label>
+                                    <p-calendar appendTo="body" [(ngModel)]="book.LRD"  [readonlyInput]="true" dateFormat="dd.mm.yy" ></p-calendar>
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="ETS">ETS Date</label>
+                                    <p-calendar appendTo="body" [(ngModel)]="book.ETS"  [readonlyInput]="true" dateFormat="dd.mm.yy" ></p-calendar>
+                                </div>
+                                           
+                                <div class="field col-3 col-offset-0">
+                                    <label for="ETA">ETA Date</label>
+                                    <p-calendar appendTo="body" [(ngModel)]="book.ETA"  [readonlyInput]="true" dateFormat="dd.mm.yy" ></p-calendar>
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="DTH">DTC</label>
+                                    <p-dropdown appendTo="body" [options]="DTH" [(ngModel)]="book.DTH" optionLabel="name" optionValue="code" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                </div>
+                                
+                                <div class="field col-3 col-offset-0">
+                                    <label for="NoFreedays">No. of Freedays</label>
+                                    <p-inputNumber [(ngModel)]="book.NoFreedays" inputId="minmax" mode="decimal" [min]="1" [max]="1000" [showButtons]="true" [step]="1"
+                                    decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
+                                </div>
+                                
+                                <div class="field col-3 col-offset-0">
+                                    <label for="FreightValue">Freight Value</label>
+                                    <p-inputNumber [(ngModel)]="book.FreightValue" inputId="minmax" mode="decimal" [min]="1" [max]="20000" [showButtons]="true"  [step]="1"
+                                    decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="VesselName">Vessel Name</label>
+                                    <input pInputText type="text" [(ngModel)]="book.VesselName" >
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="VoyageNum">Voyage Num</label>
+                                    <input pInputText type="text" [(ngModel)]="book.VoyageNum" >
+                                </div>
+                                
+                                <div class="field col-12 col-offset-0">
+                                    <label for="Comment">Comments</label>
+                                    <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="book.Comment"></textarea>
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="Rloc">Return Location</label>
+                                    <!-- <input pInputText type="text" [(ngModel)]="book.ReturnLocation" > -->
+                                    <p-dropdown appendTo="body" [options]="countriesrows" [(ngModel)]="book.ReturnLocation" optionLabel="PortName" optionValue="id"  [filter]="true" filterBy="PortName" [showClear]="true" placeholder="Select Value"></p-dropdown>
+
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="DTH">Direct FF Booking</label>
+                                    <input pInputText type="text" [(ngModel)]="book.DirectFFBooking" >
+                                </div>
+                                <div class="field col-3 col-offset-0">
+                                    <label for="DTH">Book Status</label>
+                                    <p-dropdown appendTo="body" [options]="bookstatus" [(ngModel)]="book.bookstatus" optionLabel="ShipbookStatus" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                </div>
+                                <div class="field col-5 col-offset-0">
+                                    <label for="ownerid">Owner</label>
+                                    <p-dropdown inputId="float-label" appendTo="body" [options]="users" [(ngModel)]="book.ownerid" optionLabel="UName" optionValue="Uid" [filter]="true" filterBy="UName" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                </div>
+                               
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="footer">
+                            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="HideDi()"></button>
+                            <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="onRowSave(book)"></button>
+                        </ng-template>
+                    </p-dialog>
+                    <p-dialog [(visible)]="addNewDialogueATT" [style]="{width: '1500px', height:'800px'}" header="Notes And Attachments" [modal]="true" styleClass="p-fluid">
+                        <ng-template pTemplate="content">
+                        <p-tabView> 
+                                <p-tabPanel header="Notes And Attachements">
+                                    <div class="grid">
+                                        <div class="col-12">
+                                            <app-notes  [EntityId]="EntityId" [OwnerId]="OwnerId" [OwnerName]="OwnerName" [EntityType]="EntityType"></app-notes>
+                                        </div>
+                                    </div>
+                                </p-tabPanel>
+                        </p-tabView>
+                        </ng-template>
+                        <ng-template pTemplate="footer">
+                            <button pButton pRipple label="Close" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                            <!-- <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveData()"></button> -->
+                        </ng-template>
+                    </p-dialog>
+                </div>
+            </div>
+        </div>
+        <p-blockUI  [blocked]="blockedPanel">
+            <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+            <i>
+                Please Wait, System is processing your request.</i>
+        </p-blockUI>
+        <p-toast></p-toast>
+        <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

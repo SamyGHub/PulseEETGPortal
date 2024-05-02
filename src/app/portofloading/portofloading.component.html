@@ -1,0 +1,125 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedPorts()" [disabled]="!selectedports || !selectedports.length"></button>
+                </ng-template>
+            </p-toolbar>
+        
+            <p-table #dt [columns]="cols" [value]="rows" [rows]="10" [paginator]="true" [globalFilterFields]= "cols" responsiveLayout="scroll"
+                [(selection)]="selectedports" [rowHover]="true" dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true" styleClass="p-datatable-gridlines">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <h5 class="m-0">Manage Port of loading</h5>
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <ng-container *ngFor="let col of columns">
+                            <th *ngIf="col!=='modifiedby' && col!=='createdby' && col!=='Countryid' && col!=='status'" pSortableColumn={{col}}><p-sortIcon></p-sortIcon>{{'TableHeaders.vw_Wrx_Ports.' + col | translate}}</th>
+                        </ng-container>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <ng-container *ngFor="let col of columns">
+                            <td *ngIf="col!=='modifiedby' && col!=='createdby' && col!=='Countryid' && col!=='status'">
+                                {{rowData[col]}}
+                             </td>
+                        </ng-container>
+                        
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editPorts(rowData)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedPort(rowData)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{rows ? rows.length : 0 }} ports.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        
+        <p-dialog [(visible)]="addNewDialogue" [style]="{width: '750px'}" header="Loading Ports Details" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content">
+                    <div class="grid">
+                        <!-- <div class="field col-2">
+                            <label for="id">ID</label>
+                            <input type="text" pInputText id="id" [(ngModel)]="port.id" required autofocus disabled="true"/>
+                        </div> -->
+                        <div class="col-10 col-offset-1">
+                            <label for="PortName">Port Name</label>
+                            <input type="text" pInputText id="PortName" [(ngModel)]="port.PortName" required autofocus />
+                            <small class="p-error" *ngIf="submitted && !port.PortName">Port Name is required.</small>
+                        </div>
+                        <div class="field col-10 col-offset-1">
+                            <label for="OtherName">Other Name</label>
+                            <input type="text" id="OtherName" pInputText [(ngModel)]="port.OtherName"/>
+                        </div>
+                        <div class="field col-10 col-offset-1">
+                            <label for="Code">Code</label>
+                            <input type="text" id="Code" pInputText [(ngModel)]="port.Code"/>                         
+                        </div>
+                        <div class="field col-10 col-offset-1">
+                            <label for="LatLong">Lat / Lang</label>
+                            <input type="text" id="LatLong" pInputText [(ngModel)]="port.LatLong"/>                         
+                        </div>
+                        <div class="field col-10 col-offset-1">
+                            <label for="Telephone">Telephone</label>
+                            <input type="text" id="Telephone" pInputText [(ngModel)]="port.Telephone"/>                         
+                        </div>
+                        <div class="field col-10 col-offset-1">
+                            <label for="Web">Web</label>
+                            <input type="text" id="Web" pInputText [(ngModel)]="port.Web"/>                         
+                        </div>
+                        <div class="field col-10 col-offset-1">
+                            <label for="Web">Country</label>
+                            <p-dropdown appendTo="body" [options]="countryrows" [(ngModel)]="port.Countryid" optionLabel="Name" optionValue="id"></p-dropdown>
+                        </div>
+                        <div class="field col-10 col-offset-1">
+                            <label for="ERPName">ERPName</label>
+                            <input type="text" id="ERPName" [(ngModel)]="port.ERPName" disabled="true"/>
+                        </div>
+                        <div class="field-checkbox" *ngIf="submitted">
+                            <p-toggleButton [(ngModel)]="port.status" onIcon="pi-check" offIcon="pi pi-times"></p-toggleButton>
+                            <label for="status">Is Active</label>
+                        </div>
+                    </div>
+                 
+            </ng-template>
+        
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveport()"></button>
+            </ng-template>
+        </p-dialog>
+        
+    </div>
+</div>
+<br>
+<br>
+<br>
+<br>    
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

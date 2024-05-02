@@ -1,0 +1,555 @@
+<div class="grid" >
+    <div class="col-10 col-offset-1" >
+        <p-dialog header="System Message" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+            [draggable]="false" [resizable]="false">
+            <p class="flex align-items-center justify-content-between">{{dialougmessage}}</p>
+            <ng-template pTemplate="footer">
+                <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+            </ng-template>
+         </p-dialog>
+         <div class="surface-card p-4 shadow-3 border-round"> 
+         <div class="text-3xl font-large text-800 mb-3 text-gray-900">{{SPobjs[0].SplitNo != undefined?SPobjs[0].SplitNo: ""}} | {{SPobjs[0].CustName}}</div>
+                <div> <span *ngFor="let comimage of commodities">
+                    <span *ngIf="comimage.id==SPobjs[0].Commodityid"><img [alt]="comimage.Name" [src]="comimage.Commodityimg" width="90" style="vertical-align: middle" /></span>
+                </span></div>
+            <p class="text-2xl font-medium text-900 mb-3 text-gray-700">{{SPobjs[0].Name}} | {{SPobjs[0].variety}} | {{SPobjs[0].Grade}}</p>
+         </div>
+        <!-- <p-toolbar styleClass="mb-2">
+            <ng-template pTemplate="left">
+               
+            </ng-template>                              
+        </p-toolbar> -->
+        <p-divider type="solid"></p-divider>
+
+        <p-table #dtRc 
+        [columns]="Railbysplitcols" 
+        [value]="Railbysplit" 
+        [reorderableColumns]="true" 
+        [rowsPerPageOptions]="[10, 25, 50]" 
+        [rows]="10" 
+        [paginator]="true" 
+        [globalFilterFields]= "cols" 
+            [(selection)]="selectedRailsbysplit" 
+            [rowHover]="true" 
+            dataKey="id"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" 
+            [showCurrentPageReport]="true" 
+            styleClass="p-datatable-gridlines"
+            [scrollable]="true"
+            scrollHeight="950px"
+            frozenWidth="200px"
+            responsiveLayout="scroll"
+            sortField="shipdate" [sortOrder]="1">
+
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h2 class="m-1 text-blue-800">Summary For Split RailCars</h2>
+                <span class="p-input-icon-right">
+                    <i class="pi pi-search"></i>
+                    <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                </span>
+            </div>
+        </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <!-- <th>
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th> -->
+                            <th>ID</th>
+                            <th>Car Number</th>
+                            <th>Ship Date</th>
+                            <th>Shipped Quantity</th> 
+                            <th>Unload Weight</th>
+                            <th>Container Number</th>
+                            <th>Number Of Packages</th>
+                            <th>Split No</th>
+                            <th> 
+                                <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+                            </th>
+                        </tr>
+                       
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <!-- <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td> -->
+                        <td>{{rowData.id}}</td>
+                        <td>{{rowData.carnumber}}</td>
+                        <td>{{rowData.shipdate | date}}</td>
+                        <td>{{rowData.shippedqty | number:'1.1-3'}}</td>
+                        <td>{{rowData.UnloadWeight | number:'1.1-3'}}</td>
+                        <td>{{rowData.ContainerNum}}</td>
+                        <td>{{rowData.NumOfPackages}}</td>
+                        <td>{{rowData.SplitNo}}</td>
+                        <td></td>
+                    <!-- <td>
+                        <button type="button" pButton icon="pi pi-search" (click)="selectUsr(Prd)"></button>
+                    </td> -->
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="flex align-items-center justify-content-between">
+                    In total there are {{Railbysplit ? Railbysplit.length : 0 }} RailCars.
+                </div>
+            </ng-template>
+        </p-table>
+
+        <p-divider type="solid"></p-divider>
+        <p-accordion [activeIndex]="1">
+            <p-accordionTab>
+                <ng-template pTemplate="header">
+                    <h3 class="m-0 container text-2xl text-left text-blue-800 mr-2">Bulk Import RailCars</h3>
+                    
+                </ng-template>
+                <p-card header="Bulk Import RailCars Mapping and its Containers" >
+                    <p>Bulk Upload RailCar Map For Split #  {{SPobjs[0].SplitNo != undefined?SPobjs[0].SplitNo: ""}} -- CSV file Upload</p>
+                    <!-- <div class="field col-12 md:col-4">
+                    <label for="basic">Basic</label>
+                    <p-calendar inputId="basic" [(ngModel)]="Fdlvdt"></p-calendar>
+                    </div> -->
+                    <p-fileUpload name="demo[]" (onSelect)="csv2Array($event)"
+                        [multiple]="true" accept="text/*" [maxFileSize]="1000000">
+                        <ng-template pTemplate="content">
+                            <ul *ngIf="uploadedFiles.length">
+                                <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                            </ul>
+                        </ng-template>
+                    </p-fileUpload>
+                </p-card>
+            </p-accordionTab>
+        </p-accordion>
+
+        <p-divider type="solid"></p-divider>
+        
+        <p-table #dt 
+        [columns]="cols" 
+        [rowsPerPageOptions]="[10, 25, 50]" 
+        [value]="Railobjs" 
+        dataKey="id" 
+        [tableStyle]="{'min-width': '50rem'}" 
+        selectionMode="single"
+         (onRowUnselect)="onRowUnselect($event)" 
+         [rows]="10" 
+         [paginator]="true"
+        [scrollable]="true" 
+        [tableStyle]="{'min-width': '50rem'}" 
+        [rowSelectable]="isRowSelectable"
+        styleClass="p-datatable-gridlines" 
+        [(selection)]="selectedrailcar" 
+        (onRowSelect)="onRowSelect($event)" 
+        [globalFilterFields]="cols" 
+        [scrollable]="true"
+            scrollHeight="1000px"
+            frozenWidth="200px"
+            sortField="shipdate" [sortOrder]="1">
+
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <span class="p-input-icon-right">
+                    <i class="pi pi-search"></i>
+                    <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                </span>
+                <h2 class="m-1 text-blue-800">Manage Processed RailCars</h2>
+                <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
+            </div>
+        </ng-template>    
+        <ng-template pTemplate="header" let-columns>
+                <tr>
+                   <th>Select</th>
+                    <ng-container *ngFor="let col of columns">
+                        <th pSortableColumn={{col}} *ngIf="col!=='Commodityid' && col!=='productno'"><p-sortIcon></p-sortIcon>{{'TableHeaders.vw_RailCarsRelated.' + col | translate}}</th>
+                    </ng-container>
+                    
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th><p-columnFilter type="date" field="shipdate" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="carnumber" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="ladingnum" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="Name" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="variety" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="Grade" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="Plant" display="menu"></p-columnFilter></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th> 
+                    <th></th>
+                    <th></th>    
+                    <th></th>    
+                    <th></th>          
+                    <th> 
+                        <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcelRail()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+                    </th>
+                 
+                   </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-RailCar let-rowIndex="rowIndex">
+                <tr [pSelectableRow]="RailCar" [pSelectableRowIndex]="rowIndex">
+                    <!-- <td>
+                        <p-tableCheckbox [value]="RailCar" [disabled]="SS"></p-tableCheckbox>
+                    </td> -->
+                    <td>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                               <div> <span class="pi pi-arrow-up-right"></span></div>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                {{RailCar.id}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    
+                    <td pEditableColumn >
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                <div>
+                                    {{RailCar.shipdate | date}}
+                                </div>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                    <span>{{RailCar.carnumber}}</span>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                <div>
+                                    {{RailCar.ladingnum}}
+                                </div>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                    <span>{{RailCar.Name}}</span>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                <div>
+                                    {{RailCar.variety}}
+                                </div>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                <div>
+                                    {{RailCar.Grade}}
+                                </div>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                <div>
+                                    {{RailCar.Plant}}
+                                </div>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                <div>
+                                    {{RailCar.shippedqty}}
+                                </div>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                <div>
+                                    {{RailCar.shiptoinfo}}
+                                </div>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                    <span>{{RailCar.transloaderid}}</span>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                    <span>{{RailCar.RoutingInfo}}</span>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    
+                   <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                <div>
+                                    {{RailCar.Contractnumber}}
+                                </div>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                <div>
+                                    {{RailCar.TSumConT}}
+                                </div>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td> 
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                <div>
+                                    {{RailCar.RemainingCarQty}}
+                                </div>
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td> <p-cellEditor>
+                        <ng-template pTemplate="output">
+                            <div>
+                                {{RailCar.Newshipdate | date}}
+                            </div>
+                        </ng-template>
+                    </p-cellEditor></td>
+                    <td></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="flex align-items-center justify-content-between">
+                    In total there are {{Railobjs ? Railobjs.length : 0 }} RailCar.
+                </div>
+            </ng-template>
+            <ng-template pTemplate="footer" pTemplate="right">
+                <div class="grid grid-nogutter justify-content-end">
+
+                </div>
+            </ng-template>
+        </p-table>
+        <p-table  #Dtc
+        [columns]="Containercols" 
+        [value]="containers" 
+        dataKey="id" 
+        [tableStyle]="{'min-width': '30rem'}"  
+        selectionMode="single" 
+        [(selection)]="selectedcontainer"  
+        [rowSelectable]="isRowContainerSelectable" 
+        [rowsPerPageOptions]="[10, 25, 50]"
+        styleClass="p-datatable-gridlines" 
+        [rows]="10" 
+        (onRowSelect)="onRowcontainerSelect($event)"
+        (onRowUnselect)="onRowcontainerUnselect($event)"
+        [paginator]="true"
+        [scrollable]="true"
+        scrollHeight="1000px"
+        frozenWidth="200px">
+
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h2 class="m-1 text-blue-800">Manage Containers Related RailCar Selected</h2>
+                <button pButton pRipple label="Add" icon="pi pi-plus" class="p-button-success mr-1" (click)="addContainer()" [disabled]="SS"></button>
+                <button pButton pRipple label="Update" icon="pi pi-file-edit" class="p-button-secondary mr-1" (click)="UpdateContainer()"></button>
+                <span class="p-input-icon-right">
+                    <i class="pi pi-search"></i>
+                    <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <ng-container *ngFor="let col of columns">
+                        <th *ngIf="col!=='SplitNoid' && col!=='createdby' && col!=='createdon' && col!=='modifiedby' && col!=='modifiedon' && col!=='carnumber' && col!=='railcarid'" pSortableColumn={{col}}><p-sortIcon></p-sortIcon>{{'TableHeaders.Wrx_Containers.' + col | translate}}</th>
+                    </ng-container>
+                    <th> 
+                        <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcelcontainers()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+                   </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-container let-editing="editing" let-rowIndex="rowIndex">
+                <tr [pSelectableRow]="container" [pSelectableRowIndex]="rowIndex" pTooltip="Click on Row for Update" tooltipPosition="top" tooltipEvent="hover">
+                    
+                    <td>
+                        <p-cellEditor>
+                            <ng-template pTemplate="output">
+                                {{container.id}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <p-calendar appendTo="body" [(ngModel)]="container.LoadingDate"  [readonlyInput]="true" dateFormat="dd.mm.yy" [style]="{'width':'80px'}"></p-calendar>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{container.LoadingDate | date}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="container.RailCar"   [style]="{'width':'80px'}" disabled="true">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{container.RailCar}}
+                                </ng-template>
+                            </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="container.BookingNum"   [style]="{'width':'80px'}" disabled="true">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{container.BookingNum}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="container.LoadOrderNumber"   [style]="{'width':'80px'}" disabled="true">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{container.LoadOrderNumber}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="container.ContainerNum" [style]="{'width':'80px'}">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{container.ContainerNum}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="container.NumOfPackages" [style]="{'width':'80px'}">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{container.NumOfPackages}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="container.SealNumber" [style]="{'width':'80px'}">
+
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{container.SealNumber}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="container.UnloadWeight" [style]="{'width':'80px'}">
+
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{container.UnloadWeight}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="container.BagWeight" [style]="{'width':'80px'}">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{container.BagWeight}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="container.TransferOrderNum" [style]="{'width':'80px'}">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{container.TransferOrderNum}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="container.ContractBarNumber" [style]="{'width':'80px'}" disabled="true">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{SPobjs[0].SplitNo}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="container.VGM" [style]="{'width':'80px'}">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{container.VGM}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <!-- <td pEditableColumn>
+                        <p-cellEditor>
+                            
+                            <ng-template pTemplate="output">
+                                {{container.SplitNoid}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td> -->
+                    <td>
+                        <div class="flex align-items-center justify-content-center gap-2">
+                            <!-- <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(shipinstruct,ri)" class="p-button-rounded p-button-text"></button> -->
+                            <button *ngIf="!container.id" pButton pRipple type="button" icon="pi pi-check" (click)="onRowSave(container)" class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                            <!-- <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(shipinstruct, ri)" class="p-button-rounded p-button-text p-button-danger"></button> -->
+                            <button *ngIf="container.id" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedcontainer(container)"></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="flex align-items-center justify-content-between">
+                    In total there are {{containers ? containers.length : 0 }} Container.
+                </div>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+    </p-blockUI>
+    <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+    <p-messages [enableService]="true"></p-messages>

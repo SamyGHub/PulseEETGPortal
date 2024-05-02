@@ -1,0 +1,278 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <p-dialog header="System Message" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+        [draggable]="false" [resizable]="false">
+        <p class="flex align-items-center justify-content-between">{{dialougmessage}}</p>
+        <ng-template pTemplate="footer">
+            <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+        </ng-template>
+     </p-dialog>
+        <div class="card">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                    <button pButton pRipple label="Generate Split" icon="pi pi-plus" class="p-button-danger" (click)="getDummybatch()" [disabled]="hasdumysp"></button>
+                </ng-template>
+            </p-toolbar>
+        
+            <p-table #dt 
+            [columns]="cols" 
+            [value]="rows" 
+            [rowsPerPageOptions]="[10, 25, 50]" 
+            [rows]="10" 
+            [paginator]="true" 
+            [globalFilterFields]= "cols" 
+            selectionMode="single"
+                [(selection)]="selectedDummies" 
+                [rowHover]="true" dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" 
+                [showCurrentPageReport]="true" 
+                styleClass="p-datatable-gridlines"
+                [scrollable]="true"
+                scrollHeight="1000px"
+                frozenWidth="200px"
+                responsiveLayout="scroll"
+                sortField="createdon">
+
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                        <h2 class="m-0 text-blue-800">Unallocated Contracts.</h2>                        
+                        <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <!-- <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th> -->
+                        <ng-container *ngFor="let col of columns">
+                            <th *ngIf="col!='TransID' && col!=='id' && col!=='DestinationCountry' && col!=='DestinationPort' && col!=='Bookingid' && col!=='varietyid' && col!=='Shipinstructid' && col!=='prodinstructid' &&  col!=='Commodityid' && col!=='createdby' && col!=='modifiedby'" pSortableColumn={{col}} ><p-sortIcon></p-sortIcon>{{'TableHeaders.vw_DummyCreation.' + col | translate}}</th>
+                        </ng-container>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr [pSelectableRow]="rowData">
+                        <!-- <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td> -->
+                    <ng-container *ngFor="let col of columns">
+                        <td *ngIf="col!='TransID' && col!=='id' && col!=='DestinationCountry' && col!=='DestinationPort' && col!=='Bookingid' && col!=='varietyid' && col!=='Shipinstructid' && col!=='prodinstructid' && col!=='Commodityid' && col!=='createdby' && col!=='modifiedby' && col!=='image' && col!=='status'">
+                           {{rowData[col]}}</td>
+                        <td *ngIf="col ==='image'">
+                           <div><img [src]="'assets/img/' + rowData.image" [alt]="rowData.Name" width="100" class="shadow-4" /></div>
+                        </td>
+                    </ng-container>
+                        <td>
+                            
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editDummy(rowData)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedDummy(rowData)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{rows ? rows.length : 0 }} Unallocated Shipments.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        
+        <div class="card">
+            <p-dialog [(visible)]="addNewDialogue" [style]="{width: '1000px'}" header="Create Unallocated Contract" [modal]="true" styleClass="p-fluid" (onShow)="filtervarietybycommodity(Dummy.Commodityid)">
+                <ng-template pTemplate="content">
+                    <div class="grid">
+                            <div class="field col-2 col-offset-1">
+                                <label for="id">ID</label>
+                                <input type="text" pInputText id="id" [(ngModel)]="Dummy.id" required autofocus disabled="true"/>
+                            </div>
+                            <div class="field col-7 col-offset-1">
+                                <label for="Contractnumber">Contract Number</label>
+                                <input type="text" pInputText id="Contractnumber" [(ngModel)]="Dummy.Contractnumber" disabled="true" />
+                                
+                            </div>
+                            <div class="field col-5 col-offset-1">
+                                <label for="DestinationCountry">Destination Country</label>
+                                <p-dropdown appendTo="body" [filter]="true" filterBy="Name" [showClear]="true" [options]="countryrows" [(ngModel)]="Dummy.DestinationCountry" optionLabel="Name" optionValue="id" [showClear]="true" placeholder="Select Value" [editable]=false></p-dropdown>
+                                <small class="p-error" *ngIf="submitted && !Dummy.DestinationCountry">Destination Country is required.</small>
+                           </div>
+                            <div class="field col-4 col-offset-1">
+                                <label for="DestinationPort">Destination Port</label>
+                                <p-dropdown appendTo="body" [filter]="true" filterBy="PortName" [showClear]="true" [options]="Ports" [(ngModel)]="Dummy.DestinationPort" optionLabel="PortName" optionValue="id" [showClear]="true" placeholder="Select Value" [editable]=false (onChange)="getbookings()"></p-dropdown>
+
+                            </div>
+                            <div class="field col-5 col-offset-1">
+                                <label for="Commodityid">Commodity</label>
+                                <!-- <p-inputMask aria-labelledby="Email" mask="?@?.?" [(ngModel)]="customer.Email"></p-inputMask> -->
+                                <p-dropdown appendTo="body" [filter]="true" filterBy="Name" [options]="commodities" [(ngModel)]="Dummy.Commodityid" optionLabel="Name" optionValue="id" (onChange)="filtervarietybycommodity(Dummy.Commodityid)" [showClear]="true" placeholder="Select Value" [editable]=false></p-dropdown>
+
+                            </div>
+                            <div class="field col-4 col-offset-1">
+                                <label for="varietyid">Variety</label>
+                                <p-dropdown appendTo="body" [filter]="true" filterBy="variety" [showClear]="true" [options]="filteredvariety" [(ngModel)]="Dummy.varietyid" optionLabel="variety" optionValue="id" [showClear]="true" placeholder="Select Value" [editable]=false></p-dropdown>                           
+                            </div>
+                            <div class="field col-5 col-offset-1">
+                                <label for="Gradeid">Grade</label>
+                                <p-dropdown appendTo="body" [filter]="true" filterBy="Name" [showClear]="true" [options]="grades" [(ngModel)]="Dummy.Gradeid" optionLabel="Grade" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>                           
+                            </div>
+                            <div class="field col-4 col-offset-1">
+                                <label for="Quantity">Quantity</label>
+                                <p-inputNumber inputId="Quantity" [(ngModel)]="Dummy.Quantity" mode="decimal" [min]="0"></p-inputNumber>
+                            </div>
+                            <div class="field col-10 col-offset-1">
+                                <label for="ProdIns">Production Instructions</label>
+                            
+                                <!------------------------------------------------------------------------------------------------------------------------------->
+                                <p-toast></p-toast>
+                                <p-button (click)="op.toggle($event)" icon="pi pi-search" label="Search"></p-button>
+                                <div *ngIf="selectedProduct" class="p-5 surface-card shadow-2 border-round">
+                                    <div *ngIf="!selectedProduct" class="col-4">
+                                        <div *ngFor="let item of prdcommodity">
+                                            <span *ngIf="item.id==Dummy.prodinstructid">{{item.Plant}}</span>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="selectedProduct" class="col-4">
+                                        <div class="flex align-items-center justify-content-between mt-3 mb-2">
+                                            <span class="text-900 font-medium text-xl">{{selectedpins.id}}</span>
+                                            <span class="text-900 text-xl ml-3">{{selectedpins.Plant}}</span>
+                                            <span class="text-900 text-xl ml-3">{{selectedpins.Name}}</span>
+                                            <span class="text-900 text-xl ml-3">{{selectedpins.TotalMT}}</span>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <p-overlayPanel #op [style]="{'width': '750px'}" [showCloseIcon]="true">
+                                    <ng-template pTemplate="content">
+                                        <p-table [value]="prdcommodity" selectionMode="single" [(selection)]="selectedpins" (onRowSelect)="onRowpOVSelect($event, op, Dummy)" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th pSortableColumn="id">ID<p-sortIcon field="id"></p-sortIcon></th>
+                                                    <th pSortableColumn="Gw">Gw<p-sortIcon field="Gw"></p-sortIcon></th>
+                                                    <th pSortableColumn="Plant">Plant<p-sortIcon field="Plant"></p-sortIcon></th>
+                                                    <th pSortableColumn="Commodity">Commodity<p-sortIcon field="Commodity"></p-sortIcon></th>
+                                                    <th pSortableColumn="TotalMT">Total MT<p-sortIcon field="TotalMT"></p-sortIcon></th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-rowData let-product>
+                                                <tr [pSelectableRow]="rowData">
+                                                    <td>{{product.id}}</td>
+                                                    <td>{{product.GW}}</td>
+                                                    <td>{{product.Plant}}</td>
+                                                    <td>{{product.Name}}</td>
+                                                    <td>{{product.TotalMT}}</td>
+                                                </tr>
+                                            </ng-template>
+                                        </p-table>
+                                    </ng-template>
+                                </p-overlayPanel>
+                            </div>
+                            <div class="field col-10 col-offset-1">
+                                <label for="ShipIns">Shipment Instructions</label>
+                                <!------------------------------------------------------------------------------------------------------------------------------->
+                                <p-toast></p-toast>
+                                <p-button (click)="sop.toggle($event)" icon="pi pi-search" label="Search"></p-button>
+                                <div *ngIf="selectedShp" class="p-5 surface-card shadow-2 border-round">
+                                    <div *ngIf="!selectedShp" class="col-4">
+                                        <div *ngFor="let item of shpcommodity">
+                                            <span *ngIf="item.id==Dummy.Shipinstructid">{{item.Plant}}</span>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="selectedShp" class="col-4">
+                                        <div class="flex align-items-center justify-content-between mt-3 mb-2">
+                                            <span class="text-900 font-medium text-xl">{{selectedSins.id}}</span>
+                                            <span class="text-900 text-xl ml-3">{{selectedSins.Plant}}</span>
+                                            <span class="text-900 text-xl ml-3">{{selectedSins.Name}}</span>
+                                            <span class="text-900 text-xl ml-3">{{selectedSins.TotalMT}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p-overlayPanel #sop [style]="{'width': '750px'}" [showCloseIcon]="true">
+                                    <ng-template pTemplate="content">
+                                        <p-table [value]="shpcommodity" selectionMode="single" [(selection)]="selectedSins" (onRowSelect)="onRowOVSelect($event, sop, Dummy)" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th pSortableColumn="id">ID<p-sortIcon field="id"></p-sortIcon></th>
+                                                    <th pSortableColumn="Gw">Gw<p-sortIcon field="Gw"></p-sortIcon></th>
+                                                    <th pSortableColumn="SrvName">Service Name<p-sortIcon field="SrvName"></p-sortIcon></th>
+                                                    <th pSortableColumn="TransName">Transloader<p-sortIcon field="TransName"></p-sortIcon></th>
+                                                    <th pSortableColumn="MTNum">Total MT<p-sortIcon field="MTNum"></p-sortIcon></th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-rowData let-product>
+                                                <tr [pSelectableRow]="rowData">
+                                                    <td>{{product.id}}</td>
+                                                    <td>{{product.GW}}</td>
+                                                    <td>{{product.SrvName}}</td>
+                                                    <td>{{product.TransName}}</td>
+                                                    <td>{{product.MTNum}}</td>
+                                                </tr>
+                                            </ng-template>
+                                        </p-table>
+                                    </ng-template>
+                                </p-overlayPanel>
+                            </div>
+                            <div class="field col-10 col-offset-1">
+                                <label for="BookIns">Booking Instructions</label>
+                                <!------------------------------------------------------------------------------------------------------------------------------->
+                                <p-toast></p-toast>
+                                <p-button (click)="bop.toggle($event)" icon="pi pi-search" label="Search"></p-button>
+                                <div *ngIf="selectedShp" class="p-5 surface-card shadow-2 border-round">
+                                    <div *ngIf="!selectedbook" class="col-4">
+                                        <div *ngFor="let item of books">
+                                            <span *ngIf="item.id==Dummy.Bookingid">{{item.Plant}}</span>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="selectedShp" class="col-4">
+                                        <div class="flex align-items-center justify-content-between mt-3 mb-2">
+                                            <span class="text-900 font-medium text-xl">{{selectedbook.id}}</span>
+                                            <span class="text-900 text-xl ml-3">{{selectedbook.LineName}}</span>
+                                            <span class="text-900 text-xl ml-3">{{selectedbook.BookingRef}}</span>
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                                <p-overlayPanel #bop [style]="{'width': '750px'}" [showCloseIcon]="true">
+                                    <ng-template pTemplate="content">
+                                        <p-table [value]="books" selectionMode="single" [(selection)]="selectedbook" (onRowSelect)="onRowBSelect($event, bop, Dummy)" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th pSortableColumn="id">ID<p-sortIcon field="id"></p-sortIcon></th>
+                                                    <th pSortableColumn="BookingRef">BookingRef<p-sortIcon field="BookingRef"></p-sortIcon></th>
+                                                    <th pSortableColumn="LineName">LineName<p-sortIcon field="LineName"></p-sortIcon></th>
+                                                   
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-rowData let-product>
+                                                <tr [pSelectableRow]="rowData">
+                                                    <td>{{product.id}}</td>
+                                                    <td>{{product.BookingRef}}</td>
+                                                    <td>{{product.LineName}}</td>
+                                                   
+                                                </tr>
+                                            </ng-template>
+                                        </p-table>
+                                    </ng-template>
+                                </p-overlayPanel>    
+                            </div>
+                    </div>        
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveDummy()"></button>
+                </ng-template>
+            </p-dialog>
+           
+        </div>
+    </div>
+</div>      
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

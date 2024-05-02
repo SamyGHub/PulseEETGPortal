@@ -1,0 +1,18 @@
+/* You can add global styles to this file, and also import other style files */
+.bg
+{
+  background-image: url(assets/img/fw-bg-gradient.png);
+  background-size: cover;
+  height: 91vh; 
+}
+.bghdr
+{
+  /* background-image: url(assets/img/); */
+  background-size: 20vh;
+  height: 5vh;
+  background-blend-mode: darken;
+  width: auto;
+  background-repeat:repeat-x;
+  background-position-x: left;
+  background-position-y: top;
+}

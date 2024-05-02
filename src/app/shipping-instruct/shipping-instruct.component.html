@@ -1,0 +1,250 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-toolbar styleClass="mb-2">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="Add Row" icon="pi pi-plus" class="p-button-success mr-2" (click)="addinstruct()"></button>
+                    <!-- <button pButton pRipple label="Update Instruction" icon="pi pi-file-edit" class="p-button-secondary mr-2" (click)="Updateinstruct()"></button> -->
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+                </ng-template>
+            </p-toolbar>
+            <p-dialog header="System Messages" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+                [draggable]="false" [resizable]="false">
+                <p class="flex align-items-center justify-content-between">{{dialougmessage}}</p>
+                <ng-template pTemplate="footer">
+                    <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+                </ng-template>
+            </p-dialog>
+
+            <p-table #dt 
+            [columns]="cols" 
+            [rows]="35" 
+            [paginator]="true"
+            [reorderableColumns]="true" 
+            [rowsPerPageOptions]="[10, 25, 35, 50]" 
+            [value]="Shipinstructs" 
+            dataKey="id" 
+            [tableStyle]="{'min-width': '30rem'}"  
+            selectionMode="single" 
+            [(selection)]="selectedInstruction"  
+            [rowSelectable]="isRowSelectable" 
+            (onRowSelect)="onRowSelect($event)" 
+            (onRowUnselect)="onRowUnselect($event)" 
+            scrollHeight="950px"
+            frozenWidth="200px"
+            [scrollable]="true"
+            responsiveLayout="scroll"
+             styleClass="p-datatable-gridlines"
+             [globalFilterFields]="cols">
+            <ng-template pTemplate="caption">
+                <div class="flex align-items-center justify-content-between">
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                    </span>
+               
+                    <h2 class="m-1 text-blue-800">Manage Shipping Instruction</h2>
+                    
+                    <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
+                </div>
+            </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <!-- <th>
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>                      
+                        </th>              -->
+                            <th>Grain Week</th>
+                            <th>Transloader</th>
+                            <th>Commodity</th>
+                            <th>Variety</th>
+                            <th>Grade</th>
+                            <th>Package Type</th>
+                            <th>Bags Number</th>
+                            <th>Unit Number</th>
+                            <th>Total Unit Number</th>
+                            <th>Load Instructions</th>
+                            <th>Created On</th>
+                            <th>Modified On</th>
+                            <th>Actions</th>
+                      </tr>
+                    <tr>
+                        <th pReorderableColumn></th>
+                        <th pReorderableColumn><p-columnFilter type="text" field="TransName" display="menu" ></p-columnFilter></th>
+                        <th pReorderableColumn><p-columnFilter type="text" field="Name" display="menu" ></p-columnFilter></th>
+                        <th pReorderableColumn><p-columnFilter type="text" field="variety" display="menu" ></p-columnFilter></th>
+                        <th pReorderableColumn><p-columnFilter type="text" field="Grade" display="menu" ></p-columnFilter></th>
+                        <th pReorderableColumn><p-columnFilter type="text" field="bagname" display="menu"></p-columnFilter></th>
+                        <th pReorderableColumn><p-columnFilter type="numeric" field="BagsNum" display="menu" ></p-columnFilter></th>
+                        <th pReorderableColumn><p-columnFilter type="numeric" field="UnitNum"  display="menu"></p-columnFilter></th>
+                        <th pReorderableColumn><p-columnFilter type="numeric" field="MTNum"  display="menu"></p-columnFilter></th>
+                        <th pReorderableColumn></th>
+                        <th pReorderableColumn><p-columnFilter type="date" field="createdon"  display="menu"></p-columnFilter></th>
+                        <th></th>
+                        <th></th>
+                    </tr> 
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-shipinstruct let-rowIndex="rowIndex">
+                    <tr>
+                        <!-- <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td> -->
+                        <td>{{rowData.GWName}}</td>
+                        <td>{{rowData.TransName}}</td>
+                        <td>{{rowData.Name}}</td>
+                        <td>{{rowData.variety}}</td>
+                        <td>{{rowData.Grade}}</td>
+                        <td>{{rowData.bagname}}</td>
+                        <td>{{rowData.BagsNum}}</td>
+                        <td>{{rowData.UnitNum}}</td>
+                        <td>{{rowData.MTNum | number:'1.1-3'}}</td>
+                        <td>{{rowData.LoadInstructions}}</td>
+                        <td>{{rowData.createdon | date}}</td>
+                        <td>{{rowData.modifiedon | date}}</td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editinstruction(rowData)"></button>
+                            <button pButton pRipple icon="pi pi-clone" class="p-button-rounded p-button-secondary mr-2" (click)="onRowcloneInit(rowData)" pTooltip="Clone Row" tooltipPosition="top" tooltipEvent="hover"></button>
+
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning mr-2" (click)="deleteSelectedins(rowData)"></button>
+                        </td>
+              
+                    </tr>
+           
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{Shipinstructs ? Shipinstructs.length : 0 }} Instructions.
+                    </div>
+                </ng-template>
+            </p-table>
+            </div>
+             <div class="card">           
+                <p-dialog [(visible)]="addNewDialogue" [style]="{width: '1400px'}" header="Shipping Instruction Details" [modal]="true" styleClass="p-fluid" (onShow)="filtervarietybycommodity(Shipinstruct.Commodityid)">
+                    <ng-template pTemplate="content">
+                        <div class="grid"> 
+                            <div class="field col-1 col-offset-0">
+                                <label for="id">ID</label>
+                                <input type="text" pInputText id="id" [(ngModel)]="Shipinstruct.id" disabled />
+                            </div>
+                            
+                            <div class="field col-2 col-offset-0">
+                                <label for="Gw">Grain Week</label>
+                                <p-dropdown appendTo="body" [options]="Gw" [(ngModel)]="Shipinstruct.Gw" optionLabel="GW" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                <small class="p-error" *ngIf="submitted && !Shipinstruct.Gw">Grain Week is required.</small>
+
+                            </div>
+
+                            <div class="field col-3 col-offset-0">
+                                <label for="Transloader">Transloader</label>
+                                <p-dropdown appendTo="body" [options]="Transloaders" [(ngModel)]="Shipinstruct.Transloader" optionLabel="TransName" optionValue="id"  [filter]="true" filterBy="TransName" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                <small class="p-error" *ngIf="submitted && !Shipinstruct.Transloader">Transloader is required.</small>
+
+                            </div>
+
+                            <div class="field col-3 col-offset-0">
+                                <label for="Commodityid">Commodity</label>
+                                <p-dropdown appendTo="body" [options]="Commrows" [(ngModel)]="Shipinstruct.Commodityid" optionLabel="Name" optionValue="id"  [filter]="true" filterBy="Name" (onChange)="filtervarietybycommodity(Shipinstruct.Commodityid)" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                                <small class="p-error" *ngIf="submitted && !Shipinstruct.Commodityid">Commodity is required.</small>
+
+                            </div>
+
+                            <div class="field col-2 col-offset-0">
+                                <label for="varietyid">Variety</label>
+                                <p-dropdown appendTo="body" [options]="filteredvariety" [(ngModel)]="Shipinstruct.varietyid" optionLabel="variety" optionValue="id"  [filter]="true" filterBy="variety" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                            </div>
+
+                            <div class="field col-2 col-offset-0">
+                                <label for="Gradeid">Grade</label>
+                                <p-dropdown appendTo="body" [options]="graderows" [(ngModel)]="Shipinstruct.Gradeid" optionLabel="Grade" optionValue="id" [filter]="true" filterBy="Grade" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                            </div>
+                                               
+                            <div class="field col-3 col-offset-0">
+                                <label for="Originid">Origin</label>
+                                <p-dropdown appendTo="body" [options]="origin" [(ngModel)]="Shipinstruct.Originid" optionLabel="Origin" optionValue="id" [filter]="true" filterBy="Origin" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                            </div>
+
+                            <div class="field col-3 col-offset-0">
+                                <label for="FCLNum">FCL Number</label>
+                                <p-dropdown appendTo="body" [options]="FCLs" [(ngModel)]="Shipinstruct.FCLNum" optionLabel="NumOfEcl" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                            </div>
+
+                            <div class="field col-3 col-offset-0">
+                                <label for="SrvType">Service Type</label>
+                                <p-dropdown appendTo="body" [options]="SrvType" [(ngModel)]="Shipinstruct.SrvType" optionLabel="SrvName" optionValue="id"  [filter]="true" filterBy="SrvName" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                            </div>
+
+                            <div class="field col-5 col-offset-0">
+                                <label for="ExtraSrv">Extra Service Type</label>
+                                <!-- <p-dropdown appendto="body" [options]="exsrvrows" [(ngmodel)]="shipinstruct.extrasrv" optionlabel="extrasrvname" optionvalue="id" [editable]="true" [filter]="true" filterby="extrasrvname" [showclear]="true" placeholder="select value"></p-dropdown> -->
+                                <p-multiSelect appendTo="body" [options]="Exsrvrows" [(ngModel)] = "selectedExtras" defaultLabel="Select Services" display="chip" optionLabel="extrasrvname" optionValue="id"></p-multiSelect>
+                            </div>
+        
+                            <p-divider class="field col-12 col-offset-0">Calculate MT Units</p-divider>
+                           
+                            <div class="field col-3 col-offset-0">
+                                <label for="UnitNum">Units Numbers</label>
+                                <p-inputNumber [(ngModel)]="Shipinstruct.UnitNum" mode="decimal" [min]="1" [max]="100000" [showButtons]="true" [step]="1"
+                                decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" (onBlur)="CalcMT(Shipinstruct.Pkgid)"></p-inputNumber>
+                            </div>
+                            <div class="field col-3 col-offset-0">
+                                <label for="BagsNum">Number of Bags</label>
+                                <p-inputNumber [(ngModel)]="Shipinstruct.BagsNum" inputId="minmax" inputId="minmax" mode="decimal" [min]="1" [max]="100000" [showButtons]="true" [step]="1"
+                                decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" (onBlur)="CalcMT(Shipinstruct.Pkgid)"></p-inputNumber>
+                            </div>
+                            
+                            <div class="field col-3 col-offset-0">
+                                <label for="Pkgid">Package</label>
+                                <p-dropdown appendTo="body" [options]="pkgsrows" (onChange)="CalcMT(Shipinstruct.Pkgid)" [(ngModel)]="Shipinstruct.Pkgid" optionLabel="bagname" optionValue="id" [filter]="true" filterBy="bagname" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                            </div>
+                            <div class="field col-2 col-offset-0">
+                                <label for="TotalMT">Total MT</label>
+                                <p-inputNumber inputId="TotalMT" mode="decimal" [(ngModel)]="Shipinstruct.MTNum" (onBlur)="CalcMTTimes(Shipinstruct.Pkgid)"></p-inputNumber>
+                            </div>
+                            <div class="field col-3 col-offset-0">
+                                <label for="CFIA">CFIA</label>
+                                <p-dropdown appendTo="body" [options]="CFIA" [(ngModel)]="Shipinstruct.CFIA" optionLabel="CFIA" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                            </div>
+                            <div class="field col-3 col-offset-0">
+                                <label for="SGS">Quality Inspection</label>
+                                <p-dropdown appendTo="body" [options]="SGS" [(ngModel)]="Shipinstruct.SGS" optionLabel="SGS" optionValue="id"  [showClear]="true" placeholder="Select Value"></p-dropdown>
+                            </div>
+                            <div class="field col-3 col-offset-0">
+                                <label for="Supervision">Pallet Dimensions</label>
+                                <p-dropdown appendTo="body" [options]="pallstackrows" [(ngModel)]="Shipinstruct.pallstackid" optionLabel="PalletStack" optionValue="id"  [filter]="true" filterBy="PalletStack" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                            </div>
+                           
+                            <div class="field col-3 col-offset-0">
+                                <label for="TA">#TA</label>
+                                <input pInputText [(ngModel)]="Shipinstruct.TA" />
+                            </div>
+                            <div class="field col-3 col-offset-0">
+                                <label for="Tags">Tags</label>
+                                <p-dropdown appendTo="body" [options]="Tags" [(ngModel)]="Shipinstruct.Tags" optionLabel="Tag" optionValue="id" [filter]="true" filterBy="Tags" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                            </div>
+                            <div class="field col-3 col-offset-0">
+                                <label for="maxcontainer">maxcontainer</label>
+                                <input pInputText [(ngModel)]="Shipinstruct.maxcontainer" />
+                            </div>
+                          
+                            <div class="field col-12 col-offset-0">
+                                <label for="Load">Load Instructions</label>
+                                <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="Shipinstruct.LoadInstructions"></textarea>
+                            </div>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="onRowSave()"></button>
+                    </ng-template>
+            </p-dialog> 
+        </div> 
+           
+    </div>
+    <p-blockUI  [blocked]="blockedPanel">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+        <i>
+            Please Wait, System is processing your request.</i>
+    </p-blockUI>
+    <p-toast></p-toast>
+    <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

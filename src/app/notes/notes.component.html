@@ -1,0 +1,99 @@
+<br>
+<div class="grid">
+  <div class="col-12">
+    <p-panel header="Notes & Attachements" [toggleable]="true">
+      <ng-template pTemplate="icons">
+              <!-- <button pButton class="p-panel-header-icon p-link" (click)="true">
+                  <span class="pi pi-cog"></span>
+              </button> -->
+              <button pButton class="p-panel-header-icon p-link" (click)="focusFunction()">
+                <span class="pi pi-paperclip"></span>
+            </button>
+      </ng-template>
+        <form class="ui form" [formGroup] = "formdata">
+          <div class="field">
+            
+            <input pInputText  (focus)="focusFunction()"  type="text" name="subject" placeholder="Subject" formControlName = "subject">
+          </div>
+
+          <div class="field" *ngIf="addNote">
+            
+            <textarea pInputTextarea placeholder="Enter text...." formControlName = "notes"></textarea>
+            
+          </div>
+          <div *ngIf="addNote">
+            
+          
+                <!-- <p-fileUpload [style]="{'width':'40px'}" mode="basic" icon="pi pi-paperclip" name="demo[]"   (onSelect)="handleFileInput($event)"></p-fileUpload> -->
+                
+                <!-- <button pButton pRipple type="button" [disabled] = "!formdata.valid" icon="pi pi-paperclip" class="p-button-rounded"></button> -->
+                <p-toolbar>
+                  <div class="p-toolbar-group-start">
+                    <!-- <p-fileUpload #fubauto mode="basic" name="demo[]"  [maxFileSize]="1000000" (onSelect)="handleFileInput($event)" [auto]="true" chooseLabel="Attach File"></p-fileUpload> -->
+                    <p-fileUpload mode="basic" name="demo[]"  [maxFileSize]="1000000" (onSelect)="handleFileInput($event)"></p-fileUpload>
+                  </div>
+                  <div class="p-toolbar-group-end">
+                    <!-- <p-button  label="Save" [disabled] = "!formdata.valid" class="mr-2" (click)="onClickSubmit(formdata.value)"></p-button>
+                    <p-button label="Cancel" styleClass="p-button-warning" (click)="focusOutFunction()"></p-button> -->
+                    
+              <p-button icon="pi pi-check" styleClass="p-button-success mr-2" [disabled] = "!formdata.valid"  (click)="onClickSubmit(formdata.value)" ></p-button>
+              <p-button icon="pi pi-times" (click)="focusOutFunction()" styleClass="p-button-danger"></p-button>
+                </div>
+                </p-toolbar>
+                
+          </div>
+    </form>
+   
+</p-panel>
+  </div>
+  <div class="col-12">
+    <div  *ngIf="notes">
+
+      <div class="card">
+       
+        
+        <div *ngFor="let note of notes">
+        <p-divider align="left">
+            <div class="inline-flex align-items-center">
+                <i class="pi pi-user mr-2"></i>
+                <b>{{note?.OwnerName}} : {{note?.CratedOn | date: 'dd/MM/yyyy hh:mm:ss'}} </b>
+            </div>
+        </p-divider>
+        
+        <div class="grid">
+           <div class="col-12">
+            <h3>{{note?.Subject}}</h3>
+            <p>{{note?.Notes}}</p>
+           </div>
+          <div class="col-2 ">
+          <p-button label="{{note.FileName}}" icon="pi pi-paperclip" (click)="downloadFile(note.FileName,note.MimeType, note.NotesID)" styleClass="p-button-link" >
+
+          </p-button>
+        </div>
+        <div class="col-1 col-offset-9">
+          <p-button label="" icon="pi pi-trash" pTooltip="Delete" tooltipPosition="top" (click)="deleteAttachement(note.NotesID)" styleClass="p-button-link" >
+
+          </p-button></div>
+        </div>
+       
+    </div>
+       
+    </div>
+    </div>
+  </div>
+</div>
+  <!-- <div class="ui top attached menu">
+    <div class="right menu">
+      <a class="item" (click)="focusFunction()">
+        <i class="plus icon"></i>
+      </a>
+      <a class="item">
+        <i class="paperclip icon"></i>
+      </a>
+    </div>
+    </div> -->
+
+
+
+
+

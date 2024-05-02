@@ -1,0 +1,150 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedPlants()" [disabled]="!selectedPlants || !selectedPlants.length"></button>
+                </ng-template>
+            </p-toolbar>
+        
+            <p-table #dt 
+            [columns]="cols" 
+            [rowsPerPageOptions]="[10, 25, 50]" 
+            [value]="rows" 
+            [rows]="10" 
+            [paginator]="true" 
+            [globalFilterFields]= "cols" 
+            responsiveLayout="scroll"
+                [(selection)]="selectedPlants" 
+                [rowHover]="true" 
+                dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" 
+                [showCurrentPageReport]="true" 
+                styleClass="p-datatable-gridlines">
+                
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <h5 class="m-0">Manage Packages</h5>
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th> 
+                        <ng-container *ngFor="let col of columns">
+                            <th pSortableColumn={{col}}><p-sortIcon></p-sortIcon>{{'TableHeaders.Wrx_Packages.' + col | translate}}</th>
+                        </ng-container>
+                        <th>Action</th>
+                    </tr> 
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <td *ngFor="let col of columns">
+                           <div *ngIf="col!=='image'">{{rowData[col]}}</div>
+                           <div><img *ngIf="col ==='image'" [src]="'assets/img/Bags/' + rowData.image" [alt]="rowData.Name" width="100" class="shadow-4" /></div>
+                        </td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editPkage(rowData)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedPkage(rowData)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{rows ? rows.length : 0 }} Packages.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        
+        <p-dialog [(visible)]="addNewDialogue" [style]="{width: '550px'}" header="Pakage Configurations" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content">
+                
+                    <div class="grid">
+                        <div class="field col-10 col-offset-1">
+                            <label for="bagname">Bag Name</label>
+                            <input type="text" pInputText id="bagname" [(ngModel)]="Pkg.bagname" required autofocus />
+                            <small class="p-error" *ngIf="submitted && !Pkg.bagname">bag name is required.</small>
+                        </div>
+                        <div class="col-10 col-offset-1">
+                            <label for="bagtype">Bag Type</label>
+                            <p-dropdown appendTo="body" [options]="Pkgstypes" [(ngModel)]="Pkg.bagtype" optionLabel="pkagetype" optionValue="id"></p-dropdown>
+                        </div>
+                        <div class="col-5 col-offset-1">
+                            <label for="bagCap">Bag Capacity</label>
+                            <p-inputNumber inputId="bagCap"  [(ngModel)]="Pkg.bagCap" class="ng-invalid ng-dirty" placeholder="InputNumber" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="5" autofocus></p-inputNumber>
+                            <small class="p-error" *ngIf="submitted && !Pkg.bagCap">bag Capacity is required.</small>
+                        </div>
+                        <div class="col-5 col-offset-1">
+                            <label for="bagweight">Bag Weight</label>
+                            <p-inputNumber inputId="bagweight"  [(ngModel)]="Pkg.bagweight" class="ng-invalid ng-dirty" placeholder="InputNumber" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="5" autofocus></p-inputNumber>
+                            <small class="p-error" *ngIf="submitted && !Pkg.bagweight">bag Weight is required.</small>
+                        </div>
+                        <div class="col-4 col-offset-1">
+                            <label for="weightunit">Weight Unit</label>
+                            <p-dropdown appendTo="body" [options]="Units" [(ngModel)]="Pkg.weightunit" optionLabel="UnitName" optionValue="id"></p-dropdown>
+                        </div>
+
+                        <div class="col-10 col-offset-1">
+                            <label for="Dimensions">Dimensions (IN)</label>
+                            <input type="text" pInputText id="Dimensions" [(ngModel)]="Pkg.Dimensions" required autofocus />
+                            <small class="p-error" *ngIf="submitted && !Pkg.Dimensions">bag Dimensions is required.</small>
+                        </div>
+                        <div class="col-10 col-offset-1">
+                            <label for="MTConversion">MT Conversion</label>
+                            <input type="text" pInputText id="MTConversion" [(ngModel)]="Pkg.MTConversion" required autofocus />
+                            <small class="p-error" *ngIf="submitted && !Pkg.MTConversion">Conversions is required.</small>
+                        </div>
+                        <div class="col-10 col-offset-1">
+                            <label for="colour">Coulor</label>
+                            <p-dropdown appendTo="body" [options]="color" [(ngModel)]="Pkg.colour" optionLabel="name" optionValue="code"></p-dropdown>
+                            <small class="p-error" *ngIf="submitted && !Pkg.colour">colour is required.</small>
+                        </div>
+                        <div class="col-10 col-offset-1">
+                            <label for="plain">Plain</label>
+                            <p-dropdown appendTo="body" [options]="plain" [(ngModel)]="Pkg.plain" optionLabel="name" optionValue="code"></p-dropdown>
+                        </div>
+                        <div class="col-10 col-offset-1">
+                            <label for="image">Image</label>
+                            <p-fileUpload name="demo[]" [customUpload]="true" (uploadHandler)="myUploader($event)" [auto]="true" accept="image/*"> </p-fileUpload>                            
+                            <small class="p-error" *ngIf="submitted && !Pkg.image">image is required.</small>
+                        </div>
+                        <div class="col-10 col-offset-1">
+                            <label for="ERPName">ERP Name</label>
+                            <input type="text" pInputText id="ERPName" [(ngModel)]="Pkg.ERPName" required autofocus />
+                            <small class="p-error" *ngIf="submitted && !Pkg.ERPName">ERP Name is required.</small>
+                        </div>
+                        <div class="col-10 col-offset-1">
+                            <label for="ProSoftName">ProSoft Name</label>
+                            <input type="text" pInputText id="ProSoftName" [(ngModel)]="Pkg.ProSoftName" required autofocus />
+                            <small class="p-error" *ngIf="submitted && !Pkg.ProSoftName">ProSoft Name is required.</small>
+                        </div>
+                    </div>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="savepkg()"></button>
+            </ng-template>
+        </p-dialog>
+        
+    </div>
+</div> 
+<br>
+<br><br>
+<br>       
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

@@ -1,0 +1,150 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-dialog header="System Messages" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+             [draggable]="false" [resizable]="false">
+                <p class="flex align-items-center justify-content-between">{{dialougmessage}}</p>
+                <ng-template pTemplate="footer">
+                    <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+                </ng-template>
+            </p-dialog>
+    
+            <p-table #dt 
+            [columns]="cols" 
+            [value]="rows" 
+            [tableStyle]="{'min-width': '50rem'}" 
+            styleClass="p-datatable-gridlines" 
+            rowGroupMode="subheader" 
+            groupRowsBy="Name" 
+            [rows]="25" 
+            [paginator]="true" 
+            [globalFilterFields]= "['BookingRef','Contractnumber','PortName','CustName','variety','Grade','Deliveryterms','Origin','Name','CountryGroup','Destination']" 
+            [rowsPerPageOptions]="[10, 25, 50]"  
+            [scrollable]="true"
+            scrollHeight="1000px"
+            frozenWidth="200px"
+            responsiveLayout="scroll"
+            (onPage)="paginate($event)" 
+            [first]="first"
+            sortMode="multiple"
+            [multiSortMeta]="[{field: 'Name', order: 1}, {field: 'createdon', order: -1}]">
+            
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                        <h2 class="m-1 text-blue-800">Planning Sales Contracts Screen</h2>                        
+                        <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>                   
+                        <th>Contract Number</th>
+                        <th>Contract Date</th>
+                        <th>Customer</th> 
+                        <th>Variety</th>
+                        <th>Grade</th>
+                        <th>Origin</th>
+                        <th>Configuration</th>
+                        <th>Quantity</th>
+                        <th>Total Invoiced Quantity</th>
+                        <th>Remaining Quantity</th>
+                        <th>Total Planned QTY</th>
+                        <th>Stuffed at Ports</th>
+                        <th>Price</th>
+                        <th>Delivery Terms</th>
+                        <th>Destination Country</th>
+                        <th>Delivery From Date</th>
+                        <th>Delivery To Date</th>
+                        <th>Status</th>
+                        <th hidden>Booking Refrence</th>
+                        <th>Actions</th>
+                        <th>Details</th>
+                    
+                  </tr>
+                  <tr>
+                    <th><p-columnFilter type="text" field="Contractnumber" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="date" field="Contractdate" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="CustName" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="variety" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="Grade" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="Origin"  display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="bagname"  display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="numeric" field="Quantity" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="numeric" field="Total" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="numeric" field="REMX" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="numeric" field="QTYPlanned" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="numeric" field="Stuffed" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="numeric" field="Price" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="Deliveryterms"  display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="Destination"  display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="date" field="Deliveryfromdate" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="date" field="Deliverytodate" display="menu"></p-columnFilter></th>
+                    <th><p-columnFilter type="text" field="Statusname"  display="menu"></p-columnFilter></th>
+                    <th></th>
+                    <th><button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button></th>
+                   </tr>
+                  </ng-template>
+                  <ng-template pTemplate="groupheader" let-rowData>
+                    <tr pRowGroupHeader>
+                        <td colspan="20">
+                            <span *ngFor="let comimage of commodities">
+                                <span *ngIf="comimage.id==rowData.Commodityid"> <img [alt]="rowData.Name" [src]="comimage.Commodityimg" width="32" style="vertical-align: middle" /></span>
+                            </span>
+                            <span class="font-bold ml-2">{{rowData.Name}}</span>
+                        </td>
+                    </tr>
+                </ng-template>
+                
+                <ng-template pTemplate="body" let-product>
+                    
+                    <tr pTooltip="Click on Details Button for Planning" tooltipPosition="top" tooltipEvent="hover" class="table">
+                        <!-- <td>{{product.Contractid}}</td> -->
+                        <!-- <td>{{product.Name}}</td> -->
+                        <td [ngStyle]="{'color': product.createdon.getTime() === myDate.getTime()? 'blue' : 'black'}">{{product.Contractnumber}}</td>
+                        <td>{{product.Contractdate | date}}</td>
+                        <td style="word-wrap: break-word">{{product.CustName}}</td>
+                        <td>{{product.variety}}</td>
+                        <td>{{product.Grade}}</td>
+                        <td>{{product.Origin}}</td>
+                        <td>{{product.bagname}}</td>
+                        <td>{{product.Quantity | number:'1.1-3'}}</td>
+                        <td>{{product.TotalShipped | number:'1.1-3'}}</td>
+                        <td>{{product.REMX | number:'1.1-3'}}</td>
+                        <td>{{product.QTYPlanned | number:'1.1-3'}}</td>
+                        <td>{{product.Stuffed | number:'1.1-3'}}</td>
+                        <td>{{product.Price | number:'1.1-3'}}</td>
+                        <td>{{product.Deliveryterms}}</td>                        
+                        <td>{{product.Destination}}</td>
+                        <!-- <td>{{product.Ordertype}}</td> -->
+                        <td>{{product.Deliveryfromdate | date}}</td>
+                        <td>{{product.Deliverytodate | date}}</td>
+                        <td>{{product.Statusname}}</td>
+                        <td hidden>{{product.BookingRef}}</td>
+                        
+                        <td> 
+                            <button pButton pRipple icon="pi pi-times-circle" class="p-button-rounded p-button-danger mb-2" (click)="UpdCancel(product)" pTooltip="Cancel Contract"></button>
+                            <button pButton pRipple icon="pi pi-lock" class="p-button-rounded p-button-secondary mb-2" (click)="UpdClose(product)" pTooltip="Close Contract"></button>
+                        </td>
+                            <td>  <button [routerLink]="['/app-plandetails']" [queryParams]="{product:mywindow.btoa(myjson.stringify(product))}" pButton pRipple type="button" icon="pi pi-external-link" class="p-button-rounded"></button>
+                        </td>
+                    </tr>   
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{rows ? rows.length : 0 }} Contracts.
+                    </div>
+                </ng-template>
+            </p-table>
+    </div>
+</div>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+    </p-blockUI>
+    <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+    <p-messages [enableService]="true"></p-messages>
+

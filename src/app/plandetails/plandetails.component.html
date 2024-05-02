@@ -1,0 +1,878 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="surface-card p-4 shadow-3 border-round">
+    <!-- <ng-template p-Template="start"> -->
+        <div class="text-3xl font-medium text-600 mb-3 text-gray-900">
+                {{product.Contractnumber}} | {{product.Name}} | {{product.variety}} | {{product.Grade}} | {{product.CustName}}
+        </div>
+        <div> <span *ngFor="let comimage of commodities">
+            <span *ngIf="comimage.id==product.Commodityid"> <img [alt]="comimage.Name" [src]="comimage.Commodityimg" width="90" style="vertical-align: middle" /></span>
+             </span></div>
+        <div class="text-2xl font-medium text-500 mb-3 text-gray-900" style="display:flex; justify-content:space-between;">
+            Contract Date: {{product.Contractdate | date}} | Contract Quantity: {{product.Quantity}} {{product.UnitName}} | Payment: {{product.Payment}}
+            <!-- <div>{{product.Name}} | {{product.Grade}}</div> -->
+        </div>
+        <div style="height: 230px" class="border-3 border-solid surface-border">
+            <div class="grid">
+                <div class="col-1">
+                    <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                    <label for="Configuration" class="text-xl font-small text-600 mb-2">Configuration: </label>
+                </div>
+                <div class="col-2" *ngIf="Pkages">
+                    <p-inplace [closable]="true" (onDeactivate)="Updatebag()" (onActivate)="getSalesTrans()" closeIcon="pi pi-save">
+                        <ng-template pTemplate="display">
+                            <div *ngFor="let item of Pkages">
+                                <span *ngIf="item.id==seltrans[0]?.Configuration" class="text-xl font-small text-cyan-700 mb-2 pi pi-pencil">{{item.bagname}}</span>
+                            </div>
+                            <!-- <span>{{product.bagname}}</span> -->
+                        </ng-template>
+                        <ng-template pTemplate="content">
+                            <!-- <input type="text" value="PrimeNG" pInputText /> -->
+                            <p-dropdown appendTo="body" [options]="Pkages" [(ngModel)]="seltrans[0].Configuration" [filter]="true" filterBy="bagname" optionLabel="bagname" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                        </ng-template>
+                    </p-inplace> 
+                    <!-- <label for="bagname" class="text-xl font-small text-cyan-700 mb-2">{{product.bagname}}</label> -->
+                </div>
+                <div class="col-1">
+                    <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                    <label for="Deliveryfromdate" class="text-xl font-small text-600 mb-2">Del. From Date: </label>
+                </div>
+                <div class="col-2" >
+                    <!-- <input type="text" pInputText id="Deliveryfromdate" [(ngModel)]="product.Deliveryfromdate" disabled/> -->
+                    <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{product.Deliveryfromdate | date}}</label>
+                </div>
+                <div class="col-1">
+                    <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                    <label for="Deliverytodate" class="text-xl font-small text-600 mb-2">Del. To Date: </label>
+                </div>
+                <div class="col-2">
+                    <!-- <input type="text" pInputText id="Deliverytodate" [(ngModel)]="product.Deliverytodate"  disabled/> -->
+                    <!-- <label for="deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{product.deliverytodate | date}}</label> -->
+                    <p-inplace [closable]="true" (onDeactivate)="UpdateDate()" closeIcon="pi pi-save">
+                        <ng-template pTemplate="display">
+
+                            <label for="Deliverytodate" class="text-xl font-small text-cyan-700 mb-2 pi pi-pencil">{{seldateto.Deliverytodate | date}}</label>
+                        </ng-template>
+                        <ng-template pTemplate="content">
+                            <!-- <input type="text" value="PrimeNG" pInputText /> -->
+                            <p-calendar appendTo="body" [(ngModel)]="seldateto.Deliverytodate"></p-calendar>
+                        </ng-template>
+                    </p-inplace>
+                </div>
+
+                <div class="col-1">
+                    <label for="Origin" class="text-xl font-small text-600 mb-2">Origin: </label>
+                    </div>
+                    <div class="col-2" *ngIf="origins">
+                    <p-inplace [closable]="true" (onDeactivate)="Updateorg()" (onActivate)="getSalesOrigin()" closeIcon="pi pi-save">
+                        <ng-template pTemplate="display">
+                            <div *ngFor="let item of origins">
+                                <span *ngIf="item.id==selorigin[0]?.Originid" class="text-xl font-small text-cyan-700 mb-2 pi pi-pencil">{{item.Origin}}</span>
+                            </div>
+                            <!-- <span>{{product.bagname}}</span> -->
+                        </ng-template>
+                        <ng-template pTemplate="content">
+                            <!-- <input type="text" value="PrimeNG" pInputText /> -->
+                            <p-dropdown appendTo="body" [options]="origins" [(ngModel)]="selorigin[0].Originid" [filter]="true" filterBy="Origin" optionLabel="Origin" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                        </ng-template>
+                    </p-inplace>
+                    <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                    
+                </div>
+                <!-- <div class="col-2">
+                    <input type="text" pInputText id="Origin" [(ngModel)]="product.Origin"  disabled/> 
+                    <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{product.Origin}}</label>
+                </div> -->
+                <div class="col-1">
+                    <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                    <label for="PortName" class="text-xl font-medium text-600 mb-2">Port Name: </label>
+                </div>
+                <div class="col-2" *ngIf="Ports">
+                    <p-inplace [closable]="true" (onDeactivate)="Updateport()" (onActivate)="getSalesTrm()" closeIcon="pi pi-save">
+                        <ng-template pTemplate="display">
+                            <div *ngFor="let item of Ports">
+                                <span *ngIf="item.id==seltrm[0]?.Portdischargeid" class="text-xl font-small text-cyan-700 mb-2 pi pi-pencil">{{item.PortName}}</span>
+                            </div>
+                            <!-- <span>{{product.bagname}}</span> -->
+                        </ng-template>
+                        <ng-template pTemplate="content">
+                            <!-- <input type="text" value="PrimeNG" pInputText /> -->
+                            <p-dropdown appendTo="body" [options]="Ports" [(ngModel)]="seltrm[0].Portdischargeid" [filter]="true" filterBy="PortName" optionLabel="PortName" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                        </ng-template>
+                    </p-inplace>
+                    <!-- <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{product.PaymentTrm}}</label> -->
+                </div>
+                
+                <div class="col-1">
+                    <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                    <label for="Price" class="text-xl font-small text-600 mb-2">Price: </label>
+                </div>
+                <div class="col-2">
+                    <!-- <input type="text" pInputText id="Price" [(ngModel)]="product.Price"  disabled/> -->
+                    <label for="Price" class="text-xl font-small text-cyan-700 mb-2">{{product.Price}}</label>
+
+                </div>
+                <div class="col-1">
+                    <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                    <label for="Destination" class="text-xl font-small text-600 mb-2">Destination Country: </label>
+                </div>
+                <div class="col-2" *ngIf="Descountry">
+                    <p-inplace [closable]="true" (onDeactivate)="UpdateDes()" (onActivate)="getSalesTrm()" closeIcon="pi pi-save">
+                        <ng-template pTemplate="display">
+                            <div *ngFor="let item of Descountry">
+                                <span *ngIf="item.id==seltrm[0]?.DestinationCountry" class="text-xl font-small text-cyan-700 mb-2 pi pi-pencil">{{item.Name}}</span>
+                            </div>
+                            <!-- <span>{{product.bagname}}</span> -->
+                        </ng-template>
+                        <ng-template pTemplate="content">
+                            <!-- <input type="text" value="PrimeNG" pInputText /> -->
+                            <p-dropdown appendTo="body" [options]="Descountry" [(ngModel)]="seltrm[0].DestinationCountry" optionLabel="Name" optionValue="id" [showClear]="true" placeholder="Select Value" [filter]="true" filterBy="Name"></p-dropdown>
+                        </ng-template>
+                    </p-inplace>
+                    <!-- <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{product.PaymentTrm}}</label> -->
+                </div>
+                
+                <div class="col-1">
+                    <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                    <label for="Amount" class="text-xl font-small text-600 mb-2">Amount: </label>
+                </div>
+                <div class="col-2">
+                    <!-- <input type="text" pInputText id="Price" [(ngModel)]="product.Amount"  disabled/> -->
+                    <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{product.Amount}} | {{product.CurrencyName}}</label>
+
+                </div>
+                <div class="col-1">
+                    <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                    <label for="Deliveryterms" class="text-xl font-small text-600 mb-2">Delivery Terms: </label>
+                    
+                </div>
+                <div class="col-2">
+                    <!-- <input type="text" pInputText id="Deliveryterms" [(ngModel)]="product.Deliveryterms"  disabled/> -->
+                    <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{product.Deliveryterms}}</label>
+
+                </div>
+                <div class="col-1">
+                    <!-- <button pButton pRipple type="button" label="Order type | {{product.Ordertype}}" class="p-button-raised p-button-text"></button> -->
+                    <label for="Termsofpayment" class="text-xl font-small text-600 mb-2">Terms of payment: </label>
+                </div>
+                <div class="col-2" *ngIf="termtrans">
+                    <p-inplace [closable]="true" (onDeactivate)="UpdateTrm()" (onActivate)="getSalesTrm()" closeIcon="pi pi-save">
+                        <ng-template pTemplate="display">
+                            <div *ngFor="let item of termtrans">
+                                <span *ngIf="item.id==seltrm[0]?.Termsofpayment" class="text-xl font-small text-cyan-700 mb-2 pi pi-pencil">{{item.PaymentTrm}}</span>
+                            </div>
+                            <!-- <span>{{product.bagname}}</span> -->
+                        </ng-template>
+                        <ng-template pTemplate="content">
+                            <!-- <input type="text" value="PrimeNG" pInputText /> -->
+                            <p-dropdown appendTo="body" [options]="termtrans" [(ngModel)]="seltrm[0].Termsofpayment" optionLabel="PaymentTrm" optionValue="id" [filter]="true" filterBy="PaymentTrm" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                        </ng-template>
+                    </p-inplace>
+                    <!-- <label for="Deliveryfromdate" class="text-xl font-small text-cyan-700 mb-2">{{product.PaymentTrm}}</label> -->
+                </div>
+            </div>
+        </div>
+    </div>
+<div></div>
+<p-divider type="solid"></p-divider>
+
+<div class="surface-card p-4 shadow-3 border-round">
+    <p-toolbar styleClass="mb-4">
+        
+                <ng-template pTemplate="left">
+                    <h2 class="m-0">Manage Batch Data</h2>
+                    <br>
+                    <i *ngIf="bdg!==0" class="pi pi-bell mr-4 p-text-secondary" pBadge style="font-size: 2rem" value={{bdg}} pTooltip="Please Complete Missing Split Data" tooltipPosition="top" tooltipEvent="hover"></i>
+                    <p-tag *ngIf="isplanned" styleClass="mr-2" icon="pi pi-check" severity="success" value="All Quantity Is Planned"></p-tag>
+                    <p-tag *ngIf="!isplanned" styleClass="mr-2" icon="pi pi-exclamation-triangle" severity="warning" value="You Have Remaining Quantity To Plan"></p-tag>
+                    <button pButton pRipple label="Add Contract Split" icon="pi pi-plus" class="p-button-success mr-2" (click)="addBatch()" [disabled]="isplanned"></button>
+                    <button *ngIf="visible==true" (click)="opendialog()"  pButton pRipple label="Import Permit" icon="pi pi-file-edit" class="p-button-primary mr-2" [disabled]="isDisabled"></button>       
+
+                </ng-template>
+                
+             
+                    
+                    
+       
+                <!-- <p-dropdown appendto="body" [options]="wrxconstatsmaster" [(ngmodel)]="constats[0].contractstatus" optionlabel="statusname" optionvalue="id" [showclear]="true" placeholder="contract status"></p-dropdown> -->
+                <ng-template pTemplate="right">
+                    <h4 class="m-0">Contract Status : </h4>
+                    <p-inplace [closable]="true" (onDeactivate)="UpdateConstats()" (onActivate)="getSalesTrm()" closeIcon="pi pi-save">
+                        <ng-template pTemplate="display">
+                            <div *ngFor="let item of wrxconstatsmaster">
+                                <span *ngIf="item.id==seltrm[0]?.ContractStatus" class="text-xl font-small text-cyan-700 mb-2 pi pi-pencil">{{item.Statusname}}</span>
+                            </div>
+                            <span *ngIf="!seltrm[0]?.ContractStatus" class="ml-2 text-xl font-small text-cyan-700 mb-2 pi pi-pencil">Contract Status</span>
+                        </ng-template>
+                        <ng-template pTemplate="content">
+                            <!-- <input type="text" value="PrimeNG" pInputText /> -->
+                            <p-dropdown appendTo="body" [options]="wrxconstatsmaster" [(ngModel)]="seltrm[0].ContractStatus" optionLabel="Statusname" optionValue="id"  [showClear]="true" placeholder="Contract Status"></p-dropdown>
+                        </ng-template>
+                    </p-inplace>
+                </ng-template>
+        
+        <!-- <ng-template ptemplate="right">
+             <p-dropdown appendto="body" [options]="wrxconstatsmaster" [(ngmodel)]="constats[0].contractstatus" optionlabel="statusname" optionvalue="id" [showclear]="true" placeholder="contract status"></p-dropdown> 
+            <p-inplace [closable]="true" (ondeactivate)="updateconstats()" (onactivate)="getsalestrm()" closeicon="pi pi-save">
+                <ng-template ptemplate="display">
+                    <div *ngfor="let item of wrxconstatsmaster">
+                        <span *ngif="item.id==seltrm[0]?.contractstatus" class="text-xl font-small text-cyan-700 mb-2 pi pi-pencil">{{item.statusname}}</span>
+                    </div>
+                    <span *ngif="!seltrm[0]?.contractstatus" class="ml-2 text-xl font-small text-cyan-700 mb-2 pi pi-pencil">contract status</span>
+                </ng-template>
+                <ng-template ptemplate="content">
+                     <input type="text" value="primeng" pinputtext />
+                    <p-dropdown appendto="body" [options]="wrxconstatsmaster" [(ngmodel)]="seltrm[0].contractstatus" optionlabel="statusname" optionvalue="id"  [showclear]="true" placeholder="contract status"></p-dropdown>
+                </ng-template>
+            </p-inplace>
+            <button *ngif="visible==true" (click)="opendialog()"  pbutton pripple label="import permit" icon="pi pi-file-edit" class="p-button-primary mr-2" [disabled]="isdisabled"></button>
+        </ng-template> -->
+       
+    </p-toolbar>
+
+    <p-dialog header="System Messages" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}"
+        [draggable]="false" [resizable]="false">
+        <p class="flex align-items-center justify-content-between">{{dialougmessage}}</p>
+        <ng-template pTemplate="footer">
+            <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-dialog>
+    <p-accordion [activeIndex]="0">
+        <p-accordionTab  *ngFor="let newcontractbatch of batches;index as i">
+            <ng-template pTemplate="header">
+                <h3 class="m-0 container text-2xl text-left text-blue-800 mr-2">{{newcontractbatch.SplitNo}}, </h3>
+                <h5 class="m-0 container text-2xl text-left text-blue-800 mr-4">Planned : {{newcontractbatch.CalcQuantity}} {{product.UnitName}} / {{product.Quantity}} {{product.UnitName}}</h5>
+
+                <h3 class="m-0 container text-2xl text-left text-blue-800 mr-4">Booking Reference: </h3><p-dropdown appendTo="body" class="mr-4" [options]="books" [(ngModel)]="newcontractbatch.Bookingid" optionLabel="BookingRef" optionValue="id" [filter]="true" filterBy="BookingRef" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                <button *ngIf="newcontractbatch.id" pButton pRipple label="Update Split" icon="pi pi-file-edit" class="p-button-success mr-4" (click)="Updateinstruct(newcontractbatch)" [disabled]="isDisabled"></button>
+                <button *ngIf="!newcontractbatch.id" pButton pRipple type="button"  icon="pi pi-check" (click)="onrowbatchSave(newcontractbatch)" class="p-button-rounded p-button-text p-button-success mr-2" pTooltip="Save Split" tooltipPosition="top" tooltipEvent="hover"></button>
+
+            </ng-template>
+           
+            <p-table #dt 
+            [columns]="batchcols" 
+            [value]="newcontractbatch.children" 
+            dataKey="id" 
+            [tableStyle]="{'min-width': '30rem'}" 
+                selectionMode="single" 
+                [(selection)]="selectedbatch"  
+                [rowSelectable]="isRowSelectable" 
+                (onRowSelect)="onRowSelect($event)" 
+                (onRowUnselect)="onRowUnselect($event)" 
+                styleClass="p-datatable-gridlines" 
+                [globalFilterFields]= "batchcols"
+                [scrollable]="true"
+                scrollHeight="1000px"
+                frozenWidth="200px"
+                responsiveLayout="scroll">
+
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                        <span><button pButton pRipple label="Add Source" icon="pi pi-plus" class="p-button-success mr-2" (click)="addBatchsource(newcontractbatch,i)"></button></span>
+                    </div>
+                </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <ng-container *ngFor="let col of columns">
+                        <th *ngIf="col!=='Splitid' && col!=='SplitStatus' && col!=='CROPCertURL' && col!=='SheilfLifeURL' && col!=='AllDecURL' && col!=='WQURL' && col!=='PackingListURL' && col!=='AppropriationURL' && col!=='weightCertURL' && col!=='NonGmoURL' && col!=='InvoiceURL' && col!=='BLInstructionsURL' && col!=='HealthCertURL' && col!=='phytoURL' && col!=='DestinationCountry' && col!=='id' && col!=='createdby' && col!=='createdon' && col!=='modifiedby' && col!=='modifiedon' && col!=='Contractid'" pSortableColumn={{col}} [pSortableColumnDisabled]="col === 'Bookingid'"><p-sortIcon></p-sortIcon>{{'TableHeaders.Wrx_BatchContract.' + col | translate}}</th>
+                    </ng-container>
+                    <th>Action</th>
+                    <th>RailCar Map</th>
+                    <th>Export Templates/ATT.</th>            
+                </tr>    
+            </ng-template>
+            <ng-template pTemplate="body" let-source let-editing="editing" let-rowIndex="rowIndex" pTooltip="Select Row for Update" tooltipPosition="top" tooltipEvent="hover">
+                <tr [pSelectableRow]="source" [pSelectableRowIndex]="rowIndex">
+                    
+                    <td pEditableColumn >
+                        <p-cellEditor>
+                            
+                            <ng-template pTemplate="output">
+                                <div>
+                                    <span>{{source.SplitNo}}</span>
+                                </div>
+                                
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn >
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <p-dropdown appendTo="body" [options]="WrxSourceData" [(ngModel)]="source.Source" optionLabel="SourceName" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <div *ngFor="let item of WrxSourceData">
+                                    <span *ngIf="item.id==source.Source">{{item.SourceName}}</span>
+                                </div>
+                                
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                    
+                        <!---->
+                        <div class="grid" *ngIf="source.Source==1">
+                            <p-toast></p-toast>
+                            <p-button (click)="popu.toggle($event)" icon="pi pi-search" class="col-6"></p-button>
+                            <div *ngIf="!selectedpu.length" class="col-4">
+                                <div *ngFor="let item of Purchases">
+                                    <span *ngIf="item.id==source.Sourceid">{{item.Contractnumber}}</span>
+                                </div>
+                            </div>
+                            <div *ngIf="selectedpu.lenght" class="col-4">
+                                <div class="flex align-items-center justify-content-between mt-3 mb-2">
+                                    <span class="text-900 font-medium text-xl">{{selectedpu.id}}</span>
+                                    <span class="text-900 text-xl ml-3">{{selectedpu.Contractnumber}}</span>
+                                </div>
+                            </div>
+                            <p-overlayPanel #popu [style]="{'width': '650px'}" [showCloseIcon]="true" (onHide)="setPurchaseValueFromService()" (onShow) = "clearValueOnService()">
+                                <ng-template pTemplate="content">
+                                    <p-table [value]="Purchases" selectionMode="single" [(selection)]="selectedpu" (onRowSelect)="onRowpuOVSelect($event, popu, source)" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th pSortableColumn="id">ID<p-sortIcon field="id"></p-sortIcon></th>
+                                                <th pSortableColumn="Contractnumber">Contract Number<p-sortIcon field="Contractnumber"></p-sortIcon></th>
+                                                <th pSortableColumn="Quantity">Contract Quantity<p-sortIcon field="Quantity"></p-sortIcon></th>
+                                                
+                                            </tr>
+                                        </ng-template>
+                                            <ng-template pTemplate="body" let-rowData let-product>
+                                                <tr [pSelectableRow]="rowData">
+                                                    <td>{{product.id}}</td>
+                                                    <td>{{product.Contractnumber}}</td>
+                                                    <td>{{product.Remaining | number:'1.1-3'}}</td>              
+                                                </tr>
+                                            </ng-template>
+                                        </p-table>
+                                    </ng-template>
+                                </p-overlayPanel>
+        
+                        </div>
+                        <!---->
+                        <div class="grid" *ngIf="source.Source==4">
+                            <p-toast></p-toast>
+                            <p-button (click)="podu.toggle($event)" icon="pi pi-search" class="col-6"></p-button>
+                            <div *ngIf="!selecteddu.length" class="col-4">
+                                <div *ngFor="let item of DummyContract">
+                                    <span *ngIf="item.id==source.Sourceid">{{item.Contractnumber}}</span>
+                                </div>
+                            </div>
+                            <div *ngIf="selecteddu.lenght" class="col-4">
+                                <div class="flex align-items-center justify-content-between mt-3 mb-2">
+                                    <span class="text-900 font-medium text-xl">{{selecteddu.id}}</span>
+                                    <span class="text-900 text-xl ml-3">{{selecteddu.Contractnumber}}</span>
+                                </div>
+                            </div>
+                    
+                        <p-overlayPanel #podu [style]="{'width': '650px'}" [showCloseIcon]="true" (onHide)="setDummyValueFromService()" (onShow) = "clearValueOnService()">
+                            <ng-template pTemplate="content">
+                                <p-table [value]="DummyContract" selectionMode="single" [(selection)]="selecteddu" (onRowSelect)="onRowDummySelect($event, podu, source)" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th pSortableColumn="id">ID<p-sortIcon field="id"></p-sortIcon></th>
+                                            <th pSortableColumn="Contractnumber">Contract Number<p-sortIcon field="Contractnumber"></p-sortIcon></th>
+                                            <th pSortableColumn="Quantity">Contract Quantity<p-sortIcon field="Quantity"></p-sortIcon></th>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-rowData let-product>
+                                        <tr [pSelectableRow]="rowData">
+                                            <td>{{product.id}}</td>
+                                            <td>{{product.Contractnumber}}</td>
+                                            <td>{{product.Quantity}}</td>              
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </ng-template>
+                        </p-overlayPanel>
+                    </div>
+                    </td>
+                
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <p-inputNumber [(ngModel)]="source.CalcQuantity"  mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [min]="1" [max]="Remaining" [allowEmpty]=false [showButtons]=true [step]="0.1"></p-inputNumber>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{source.CalcQuantity}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <p-dropdown appendTo="body" [options]="books" [(ngModel)]="source.Bookingid" optionLabel="BookingRef" optionValue="id" [filter]="true" filterBy="BookingRef" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <div *ngFor="let item of bookdisp">
+                                    <span *ngIf="item.id==source.Bookingid">{{ item.BookingRef }}</span>
+                                </div>
+                                
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <!-- <td pEditableColumn>
+                        <div class="grid">
+                            <div class="col-8">
+                                <div *ngFor="let item of Prdinstructs">
+                                    <span *ngIf="item.id==newcontractbatch.prodinstructid">{{item.Plant}}</span>
+                                </div>
+                            </div>
+                            <div *ngIf="newcontractbatch.id && newcontractbatch.Source==2" class="col-4">
+                                <p-button icon="pi pi-search" (click)="showprodinstruct(newcontractbatch)"></p-button>
+                            </div>
+                        </div>
+                    </td> -->
+                    <td pEditableColumn>
+                        <div class="grid" *ngIf="source.Source==2 || source.Source==4">
+                            <p-toast></p-toast>
+                            <p-button (click)="pop.toggle($event)" icon="pi pi-search" class="col-6"></p-button>
+                            <div *ngIf="!selectedpins.length" class="col-4">
+                                <div *ngFor="let item of prdcommodity">
+                                    <span *ngIf="item.id==source.prodinstructid">{{item.Plant}}</span>
+                                </div>
+                            </div>
+                            <div *ngIf="selectedpins.lenght" class="col-4">
+                                <div class="flex align-items-center justify-content-between mt-3 mb-2">
+                                    <span class="text-900 font-medium text-xl">{{selectedpins.id}}</span>
+                                    <span class="text-900 text-xl ml-3">{{selectedpins.Plant}}</span>
+                                </div>
+                            </div>
+                            
+                            <p-overlayPanel #pop [style]="{'width': '650px'}" [showCloseIcon]="true" (onHide)="setProductionInstructValueFromService()" (onShow) = "clearValueOnService()">
+                                <ng-template pTemplate="content">
+                                    <p-table [value]="prdcommodity" selectionMode="single" [(selection)]="selectedpins" (onRowSelect)="onRowpOVSelect($event, pop, source)" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th pSortableColumn="id">ID<p-sortIcon field="id"></p-sortIcon></th>
+                                                <th pSortableColumn="Gw">Gw<p-sortIcon field="Gw"></p-sortIcon></th>
+                                                <th pSortableColumn="Plant">Plant<p-sortIcon field="Plant"></p-sortIcon></th>
+                                                <th pSortableColumn="Commodity">Commodity<p-sortIcon field="Commodity"></p-sortIcon></th>
+                                                <th pSortableColumn="TotalMT">Total MT<p-sortIcon field="TotalMT"></p-sortIcon></th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-rowData let-product>
+                                            <tr [pSelectableRow]="rowData">
+                                                <td>{{product.id}}</td>
+                                                <td>{{product.GW}}</td>
+                                                <td>{{product.Plant}}</td>
+                                                <td>{{product.Name}}</td>
+                                                <td>{{product.TotalMT}}</td>
+                                               
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </ng-template>
+                            </p-overlayPanel>
+                        </div>
+                    </td>
+                    <!-- <td pEditableColumn>
+                        <div class="grid">
+                            <div class="col-8">
+                                <div *ngFor="let item of Shipinstructs">
+                                    <span *ngIf="item.id==newcontractbatch.Shipinstruct">{{ item.TransName }}</span>
+                                    </div>
+                            </div>
+                            <div *ngIf="newcontractbatch.id" class="col-4">
+                                <p-button icon="pi pi-search" (click)="showshipinstruct(newcontractbatch)"></p-button>
+                            </div>
+                        </div>
+                    </td> -->
+                    <td pEditableColumn>
+                        <div class="grid">
+                            <p-toast></p-toast>
+                            <p-button (click)="op.toggle($event)" icon="pi pi-search" class="col-8"></p-button>
+                            <div *ngIf="!selectedprod.length" class="col-4">
+                                <div *ngFor="let item of shpcommodity">
+                                    <span *ngIf="item.id==source.Shipinstruct">{{ item.TransName }}</span>
+                                </div>
+                            </div>
+                            <div *ngIf="selectedprod.lenght" class="col-4">
+                                <div class="flex align-items-center justify-content-between mt-3 mb-2">
+                                    <span class="text-900 font-medium text-xl">{{selectedprod.id}}</span>
+                                    <span class="text-900 text-xl ml-3">{{selectedprod.TransName}}</span>
+                                </div>
+                            </div>
+                            
+                            <p-overlayPanel #op [style]="{'width': '650px'}" 
+                            [showCloseIcon]="true" (onHide)="setShippingInstructValueFromService()" (onShow) = "clearValueOnService()">
+                                <ng-template pTemplate="content">
+                                    <p-table [value]="shpcommodity" 
+                                    selectionMode="single" 
+                                    [(selection)]="selectedprod" 
+                                    (onRowSelect)="onRowOVSelect($event, op, source)" 
+                                    [paginator]="true" 
+                                    [rows]="5" 
+                                    responsiveLayout="scroll">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th pSortableColumn="id">ID<p-sortIcon field="id"></p-sortIcon></th>
+                                                <th pSortableColumn="Gw">Gw<p-sortIcon field="Gw"></p-sortIcon></th>
+                                                <th pSortableColumn="Commodity">Commodity<p-sortIcon field="Commodity"></p-sortIcon></th>
+                                                <th pSortableColumn="SrvName">Service Name<p-sortIcon field="SrvName"></p-sortIcon></th>
+                                                <th pSortableColumn="TransName">Transloader<p-sortIcon field="TransName"></p-sortIcon></th>
+                                                <th pSortableColumn="MTNum">Total MT<p-sortIcon field="MTNum"></p-sortIcon></th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-rowData let-product>
+                                            <tr [pSelectableRow]="rowData">
+                                                <td>{{product.id}}</td>
+                                                <td>{{product.GW}}</td>
+                                                <td>{{product.Name}}</td>
+                                                <td>{{product.SrvName}}</td>
+                                                <td>{{product.TransName}}</td>
+                                                <td>{{product.MTNum}}</td>
+
+                                                <!-- <div class="col-8">
+                                                        <div *ngFor="let item of Shipinstructs">
+                                                            <span *ngIf="item.id==newcontractbatch.Shipinstruct">{{ item.TransName }}</span>
+                                                        </div>
+                                                </div> -->
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </ng-template>
+                            </p-overlayPanel>
+                        </div>
+                    </td>
+                    <td pEditableColumn >
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <textarea id="float-input" rows="5" cols="30" pInputTextarea [(ngModel)]="source.UserComments"></textarea>
+                                
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{source.UserComments}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td>
+                        <div class="flex align-items-center justify-content-center gap-2">
+                            <!-- <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(shipinstruct,ri)" class="p-button-rounded p-button-text"></button> -->
+                            <button *ngIf="!source.id" pButton pRipple type="button"  icon="pi pi-check" (click)="onRowSave(source)" class="p-button-rounded p-button-text p-button-success mr-2" pTooltip="Save Split" tooltipPosition="top" tooltipEvent="hover"></button>
+                            <!-- <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(shipinstruct, ri)" class="p-button-rounded p-button-text p-button-danger"></button> -->
+                            <button *ngIf="source.id" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedSplit(source)" pTooltip="Delete Split" tooltipPosition="top" tooltipEvent="hover"></button>
+                            <button *ngIf="source.Source==4 && source.id" pButton pRipple icon="pi pi-fast-forward" class="p-button-rounded p-button-secondary" (click)="TransferDummy()" pTooltip="Transfer Dummy To Split" tooltipPosition="top" tooltipEvent="hover"></button>
+
+                        </div>
+                    </td>
+                    
+                    <td>
+                        <button [routerLink]="['/app-railscardetails']" [queryParams]="{source:mywindow.btoa(myjson.stringify(source))}" pButton pRipple type="button" icon="pi pi-external-link" class="p-button-rounded"></button>
+                    </td>
+                
+                    <td>
+                        <p-button *ngIf="source.id && source.Source==2" class="p-button-success mr-2" icon="pi pi-envelope" (click)="GetTemplatePrd(source.id)" pTooltip="Production Instruction" tooltipPosition="top" tooltipEvent="hover" hidden></p-button>
+                        <p-button *ngIf="source.id" class="p-button-success mr-2" icon="pi pi-envelope" (click)="GetTemplateShip(source.id)" pTooltip="Shipping Instruction" tooltipPosition="top" tooltipEvent="hover"></p-button>
+                        <p-button *ngIf="source.id" class="p-button-success mr-2" icon="pi pi-paperclip" (click)="opendialogATT(source.Bookingid)" pTooltip="Booking Attachement" tooltipPosition="top" tooltipEvent="hover"></p-button>
+                    </td>
+                
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="flex align-items-center justify-content-between">
+                    In total there are {{newcontractbatch.children ? newcontractbatch.children.length : 0 }} Planned Sources.
+                </div>
+            </ng-template>
+        </p-table>
+    </p-accordionTab>
+                
+</p-accordion>
+</div>
+<p-divider type="solid"></p-divider>
+
+        <p-table #dtact [columns]="ActualCols" 
+        [value]="ActualTransaction" 
+        dataKey="id" 
+        [tableStyle]="{'min-width': '30rem'}" 
+            selectionMode="single" 
+            [(selection)]="selectedbatch"  
+
+            (onRowSelect)="onActualRowSelect($event)" 
+            (onRowUnselect)="onActualRowUnselect($event)" 
+            styleClass="p-datatable-gridlines"
+            [scrollable]="true"
+            scrollHeight="1000px"
+            frozenWidth="200px"
+            responsiveLayout="scroll">
+            <ng-template pTemplate="caption">
+                <div class="flex align-items-center justify-content-between">
+                    <h5 class="m-0 container text-2xl text-left text-blue-800">Actual Contract Transactions | Remaining Quantity To Execute: {{AcRemaining}} {{product.UnitName}} / {{product.RemQuantity}} {{product.UnitName}}</h5>
+                    <span class="p-input-icon-left">
+                        <button pButton pRipple label="Update" icon="pi pi-file-edit" (click)="UpdateActual()" class="p-button-success" [disabled]="IsActualTransaction"></button>
+                    </span>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th>Select</th>
+                    <ng-container *ngFor="let col of columns">
+                        <th *ngIf="col!=='DestinationCountry' && col!=='id' && col!=='createdby' && col!=='createdon' && col!=='modifiedby' && col!=='modifiedon' && col!=='ContractId' && col!=='Configuration' && col!=='SalesPurchaseorder' && col!=='Invoiceaccount' && col!=='Invoicedate' && col!=='Duedate' && col!=='Duedate' && col!=='Invoiceamount' && col!=='Paymentreceived' && col!=='Paymentdate' && col!=='Paymentdate' && col!=='Oustanding' && col!=='Shipmentperiod'" pSortableColumn={{col}}><p-sortIcon></p-sortIcon>{{'TableHeaders.Wrx_TransContract.' + col | translate}}</th>
+                    </ng-container>
+                </tr>
+            </ng-template>
+    <ng-template pTemplate="body" let-rowData let-editing="editing" let-rowIndex="rowIndex">
+        <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex">
+            <td>
+                <p-cellEditor>
+                    <ng-template pTemplate="output">
+                       <div> <span class="pi pi-arrow-up-right"></span></div>
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td pEditableColumn>
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <p-dropdown  appendTo="body" [options]="WrxSplitData" [(ngModel)]="rowData.Splitno" optionLabel="SplitNo" optionValue="id" [showClear]="true" placeholder="Select Value"></p-dropdown>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        <div *ngFor="let item of WrxSplitData">
+                            <span *ngIf="item.id==rowData.Splitno">{{item.SplitNo}}</span>
+                        </div>
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td>
+                <p-cellEditor>
+                    <ng-template pTemplate="output">
+                        {{rowData.Deliveryfromdate | date}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td>
+                <p-cellEditor>
+                    <ng-template pTemplate="output">
+                        {{rowData.Deliverytodate | date}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td pEditableColumn>
+                <p-cellEditor>
+                    <ng-template pTemplate="output">
+                        {{rowData.Contractquantity}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td pEditableColumn>
+                <p-cellEditor>
+                    <ng-template pTemplate="output">
+                        {{rowData.Shippedquantity}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td pEditableColumn>
+                <p-cellEditor>
+                    <ng-template pTemplate="output">
+                        {{rowData.Numberofbags}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td pEditableColumn>
+                <p-cellEditor>
+                    <ng-template pTemplate="output">
+                        {{rowData.Invoice}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td pEditableColumn>
+                <p-cellEditor>
+                    <ng-template pTemplate="output">
+                        {{rowData.Status}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td pEditableColumn>
+                <p-cellEditor>
+                    <ng-template pTemplate="output">
+                        {{rowData.Contractstatus}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+        <div class="flex align-items-center justify-content-between">
+            In total there are {{ActualTransaction ? ActualTransaction.length : 0 }} Actual Transactions.
+        </div>
+    </ng-template>
+</p-table>
+    <p-dialog [(visible)]="generalservice.purDialogueDisplay" (onHide)="setPurchaseValueFromService()" (onShow) = "clearValueOnService()"  [style]="{width: '1050px', height:'800px'}" header="Purchase Contracts Details" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <app-purchasecontracts></app-purchasecontracts>
+        </ng-template>
+    </p-dialog>
+    <p-dialog [(visible)]="generalservice.shipDialogueDisplay" (onHide)="setShippingInstructValueFromService()" (onShow) = "clearValueOnService()"  [style]="{width: '2100px', height:'900px'}" header="Shipping Instruction Details" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <app-shipping-instruct></app-shipping-instruct>
+        </ng-template>
+    </p-dialog>
+    <p-dialog [(visible)]="generalservice.prodDialogueDisplay" (onHide)="setProductionInstructValueFromService()" (onShow) = "clearValueOnService()"  [style]="{width: '2100x', height:'900px'}" header="Production Instruction Details" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <app-prodinstruct></app-prodinstruct>
+        </ng-template>
+    </p-dialog>
+    <p-dialog [(visible)]="addNewDialogueATT" [style]="{width: '1500px', height:'800px'}" header="Notes And Attachments" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+        <p-tabView> 
+                <p-tabPanel header="Notes And Attachements">
+                    <div class="grid">
+                        <div class="col-12">
+                            <app-notes  [EntityId]="EntityId" [OwnerId]="OwnerId" [OwnerName]="OwnerName" [EntityType]="EntityType"></app-notes>
+                        </div>
+                    </div>
+                </p-tabPanel>
+        </p-tabView>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Close" icon="pi pi-times" class="p-button-text" (click)="hidedialogATT()"></button>
+            <!-- <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveData()"></button> -->
+        </ng-template>
+    </p-dialog>
+    <p-dialog [(visible)]="addNewDialogue" [style]="{width: '1500px', height:'800px'}" header="Import Permit Details" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <p-tabView>                 
+                <p-tabPanel header="Details">
+                <div class="grid">
+                        <p-toolbar styleClass="mb-4">
+                            <ng-template pTemplate="left">
+                                <button pButton pRipple label="Add" icon="pi pi-plus" class="p-button-success mr-2" (click)="addimport()"></button>
+                                <button pButton pRipple label="Update" icon="pi pi-file-edit" class="p-button-success mr-2" (click)="Updateinstruct(newcontractbatch)"></button>
+                            </ng-template>                              
+                        </p-toolbar>
+                    <p-table #dtimp [columns]="importcols" 
+                    [value]="ImportPrmits" dataKey="id" 
+                    [tableStyle]="{'min-width': '90rem'}" 
+                    
+                    selectionMode="single" 
+                    [(selection)]="selectedInstruction"
+                    (onRowSelect)="onRowSelect($event)" 
+                    (onRowUnselect)="onRowUnselect($event)"
+                    [scrollable]="true"
+                    scrollHeight="1000px"
+                    frozenWidth="200px"
+                    responsiveLayout="scroll">
+                        <ng-template pTemplate="caption">
+                            <div class="flex align-items-center justify-content-between">
+                                <h5 class="m-0">Manage Import Details</h5>
+                                <span class="p-input-icon-right">
+                                    <i class="pi pi-search"></i>
+                                    <input #searchinput putText type="text" (input)="dtimp.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                                </span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <ng-container *ngFor="let col of columns">
+                                    <th *ngIf="col!=='createdby' && col!=='createdon' && col!=='modifiedby' && col!=='modifiedon' && col!=='contractid'" pSortableColumn={{col}}><p-sortIcon></p-sortIcon>{{'TableHeaders.Wrx_ImportPermit.' + col | translate}}</th>
+                                </ng-container>
+                                <th></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ImportPrmit let-editing="editing" let-rowIndex="rowIndex">
+                            <tr [pSelectableRow]="ImportPrmit" [pSelectableRowIndex]="rowIndex">
+                                <td>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="output">
+                                            {{ImportPrmit.id}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="ImportPrmit.importno" disabled="false">
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            <div>
+                                                {{ImportPrmit.importno}}
+                                            </div>
+                                            
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="ImportPrmit.importquantity" disabled="false">
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            <div>
+                                                {{ImportPrmit.importquantity}}
+                                            </div>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-calendar appendTo="body" [(ngModel)]="ImportPrmit.importdate" dateFormat="dd.mm.yy"></p-calendar>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            <div>
+                                                {{ImportPrmit.importdate | date}}
+                                            </div>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td  pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-calendar appendTo="body" [(ngModel)]="ImportPrmit.importexpiry" dateFormat="dd.mm.yy"></p-calendar>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{ImportPrmit.importexpiry | date}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td>
+                                    <div class="flex align-items-center justify-content-center gap-2">
+                                        <!-- <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(Prdinstruct,ri)" class="p-button-rounded p-button-text"></button> -->
+                                        <button *ngIf="!ImportPrmit.id" pButton pRipple type="button"  icon="pi pi-check" (click)="onRowSaveImport(ImportPrmit)" class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                                        <!-- <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(Prdinstruct, ri)" class="p-button-rounded p-button-text p-button-danger"></button> -->
+                                        <button *ngIf="ImportPrmit.id" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedimport(ImportPrmit)"></button>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="footer" pTemplate="right">
+                            <div class="grid grid-nogutter justify-content-end">
+            
+                            </div>
+                        </ng-template>
+                    </p-table>
+                    </div>
+                </p-tabPanel>
+                <p-tabPanel header="Notes And Attachements">
+                    <div class="grid">
+                        <div class="col-12">
+                            <app-notes  [EntityId]="EntityId" [OwnerId]="OwnerId" [OwnerName]="OwnerName" [EntityType]="EntityType"></app-notes>
+                        </div>
+                    </div>
+                </p-tabPanel>
+        </p-tabView>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Close" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+            <!-- <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveData()"></button> -->
+        </ng-template>
+    </p-dialog>
+    </div>
+</div>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<p-messages [enableService]="true"></p-messages>
+<div class="badges" hidden>
+    <p-badge styleClass="mr-2"></p-badge>
+</div>

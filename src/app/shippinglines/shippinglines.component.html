@@ -1,0 +1,108 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedLines()" [disabled]="!selectedRailcars || !selectedRailcars.length"></button>
+                </ng-template>
+                <!-- <ng-template pTemplate="right">
+                    <button pButton pRipple (click)="addToContainer()" label="Containers" icon="pi pi-users" class="p-button-help" [disabled]="!selectedRailcars || !selectedRailcars.length || (selectedRailcars.length>1)"></button> 
+                    <button pButton pRipple (click)="addToOrigin()" label="Origins" icon="pi pi-users" class="p-button-help" [disabled]="!selectedRailcars || !selectedRailcars.length || (selectedRailcars.length>1)"></button>
+                </ng-template> -->
+            </p-toolbar>
+            <p-table #dt [columns]="cols" [rowsPerPageOptions]="[10, 25, 50]" [value]="Lines" [rows]="10" [paginator]="true" responsiveLayout="scroll" [rowHover]="true" dataKey="id" [globalFilterFields]= "cols" [(selection)]="selectedRailcars"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true" styleClass="p-datatable-gridlines">
+                
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <h5 class="m-0">Manage Shipping Lines</h5>
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 5rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <ng-container *ngFor="let col of columns">
+                            <th pSortableColumn={{col}} [pSortableColumnDisabled]="col === 'id'"><p-sortIcon *ngIf="col!=='id'"></p-sortIcon>{{'TableHeaders.Wrx_ShippingLines.' + col | translate}}</th>
+                        </ng-container>
+                        <th>Action</th>
+                    </tr>
+                   
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <ng-container *ngFor="let col of columns">
+                             <td *ngIf="col!=='Logo'">
+                                <div>{{rowData[col]}}</div>
+                            </td>
+                            <td *ngIf="col==='Logo'">
+                                <div><img [src]="rowData.Logo" style="width: 100px;height:100px;" [alt]="rowData.LineName" class="shadow-4"/></div>
+                            </td>
+                        </ng-container>
+                        
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editLine(rowData)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteLine(rowData)"></button>
+                        </td>
+                    </tr>
+                 </ng-template>
+                 
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{Lines ? Lines.length : 0 }} Shipping Lines.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        
+        <p-dialog [(visible)]="addNewDialogue" [style]="{width: '550px'}" header="RailCar Details" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content"> 
+                <div class="field col-10 col-offset-1">
+                    <label for="LineName">Line Name</label>
+                    <input type="text" id="LineName" pInputText [(ngModel)]="Line.LineName" required/>
+                </div>
+                <div class="field col-10 col-offset-1">
+                    <label for="Abbreviation">Abbreviation</label>
+                    <input type="text" id="Abbreviation" pInputText [(ngModel)]="Line.Abbreviation" required/>
+                </div>
+                <div class="field col-10 col-offset-1">
+                    <label for="Carrier">Carrier ACI Code</label>
+                    <input type="text" id="Carrier" pInputText [(ngModel)]="Line.Carrier" required/>
+                </div>
+                <div class="field col-10 col-offset-1">
+                    <label for="Logo">Current image</label><br>
+                    <img [src]="Line.Logo" style="width: 100px;height:100px;" [alt]="Line.LineName" class="shadow-4"/>
+                </div>
+                <div class="field col-10 col-offset-1">
+                    <label for="image">Upload New Image</label>
+                    <p-fileUpload name="demo[]" [(ngModel)]="Line.Logo" [customUpload]="true" (uploadHandler)="myUploader($event)" (onSelect)="handleFileInput($event)" [auto]="true" accept="image/*"> </p-fileUpload>                            
+                </div>       
+            </ng-template>
+        
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveLine()"></button>
+            </ng-template>
+        </p-dialog>
+    
+    </div>
+</div>
+<br>
+<br>
+<br>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>

@@ -1,0 +1,144 @@
+<div class="grid">
+    <div class="field col-10 col-offset-1">
+        <div class="card">
+            <p-toolbar styleClass="mb-2">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="addNew()"></button>
+                    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedCommodities(selectedCommodities)" [disabled]="!selectedCommodities || !selectedCommodities.length"></button>
+                </ng-template>
+            </p-toolbar>
+        
+            <p-table #dt 
+            [columns]="cols" 
+            [value]="rows" 
+            [reorderableColumns]="true" 
+            [rowsPerPageOptions]="[10, 25, 50]" 
+            [rows]="10" 
+            [paginator]="true" 
+            [globalFilterFields]= "cols" 
+                [(selection)]="selectedCommodities" 
+                [rowHover]="true" 
+                dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" 
+                [showCurrentPageReport]="true" 
+                styleClass="p-datatable-gridlines"
+                [scrollable]="true"
+                scrollHeight="950px"
+                frozenWidth="200px"
+                responsiveLayout="scroll">
+
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <h2 class="m-1 text-blue-800">Manage Commodities</h2>
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input #searchinput putText type="text" (input)="dt.filterGlobal(searchinput.value, 'contains')" placeholder="Search..." style="height:'30px'"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 3rem" >
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <ng-container *ngFor="let col of columns">
+                            <th pReorderableColumn *ngIf="col!=='Commodityimg' && col!=='createdby' && col!=='modifiedby' && col!=='status'" pSortableColumn={{col}} [pSortableColumnDisabled]="col === 'image'"><p-sortIcon *ngIf="col!=='image'"></p-sortIcon>{{'TableHeaders.vw_CommodityCreation.' + col | translate}}</th>
+                        </ng-container>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                      
+                    <ng-container *ngFor="let col of columns">
+                        <td *ngIf="col!=='Commodityimg' && col!=='createdby' && col!=='modifiedby' && col!=='image' && col!=='status'">
+                           {{rowData[col]}}
+                        </td>
+                       
+                        <td *ngIf="col ==='image'">
+                           <div><img [src]="rowData.Commodityimg" style="width: 100px;height:100px;" [alt]="rowData.Name" class="shadow-4"/></div>
+                        </td>
+                        
+                        
+                    </ng-container>
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editCommodity(rowData)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteSelectedCommodity(rowData)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">
+                        In total there are {{commodities ? rows.length : 0 }} Commodities.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        <div class="card">
+            <p-dialog [(visible)]="addNewDialogue" [style]="{width: '750px'}" header="Commodity Details" [modal]="true" styleClass="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="grid">
+                            <div class="field col-2 col-offset-1">
+                                <label for="id">ID</label>
+                                <input type="text" pInputText id="id" [(ngModel)]="commodity.id" required autofocus disabled="true"/>
+                            </div>
+                            <div class="field col-7 col-offset-1">
+                                <label for="Name">Commodity Name</label>
+                                <input type="text" pInputText id="Name" [(ngModel)]="commodity.Name" required autofocus />
+                                <small class="p-error" *ngIf="submitted && !commodity.Name">Commodity Name is required.</small>
+                            </div>
+                            <div class="field col-10 col-offset-1">
+                                <label for="Botanical">Botanical Name</label>
+                                <textarea id="Botanical" pInputTextarea [(ngModel)]="commodity.Botanical" required rows="3" cols="20"></textarea>
+                            </div>
+                            <div class="field col-10 col-offset-1">
+                                <label for="HSCODE">HS Code</label>
+                                <input type="text" pInputText id="HSCODE" [(ngModel)]="commodity.HSCODE" required/>
+                            </div>
+                            <div class="field col-10 col-offset-1">
+                                <label for="Commoditytype">Commodity Type</label>
+                                <p-dropdown appendTo="body" [(ngModel)]="commodity.CommodityType" [options]="CommodityType" optionLabel="type" optionValue="id" [formControl]="type"></p-dropdown>
+
+                            </div>
+                            <div class="field col-10 col-offset-1">
+                                <label for="ERPRef">ProSoft Refrence</label>
+                                <input type="text" pInputText id="ERPRef" [(ngModel)]="commodity.ERPRef" required/>
+                            </div>
+                            <div class="field col-10 col-offset-1">
+                                <label for="ERPName">ERP Name</label>
+                                <!-- <p-inputMask aria-labelledby="Email" mask="?@?.?" [(ngModel)]="customer.Email"></p-inputMask> -->
+                                <input type="text" pInputText id="ERPName" [(ngModel)]="commodity.ERPName" readonly/>
+                            </div>
+                            <div class="field col-10 col-offset-1">
+                                <label for="image">Current image</label><br>
+                                <img [src]="commodity.Commodityimg" style="width: 100px;height:100px;" [alt]="commodity.Name" class="shadow-4"/>
+                            </div>
+                            <div class="field col-10 col-offset-1">
+                                <label for="image">Upload New image</label>
+                                <p-fileUpload name="demo[]" [customUpload]="true" [(ngModel)]="commodity.Commodityimg" (uploadHandler)="myUploader($event)" (onSelect)="handleFileInput($event)" [auto]="true" accept="image/*"> </p-fileUpload>                            
+                            </div>
+                            <div class="field-checkbox col-2 col-offset-1" *ngIf="submitted">
+                                <p-toggleButton [(ngModel)]="commodity.status" onIcon="pi-check" offIcon="pi pi-times"></p-toggleButton>
+                                <label for="status">Is Active</label>
+                            </div>
+                    </div>        
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveCommodity()"></button>
+                </ng-template>
+            </p-dialog>
+           
+        </div>
+    </div>
+</div>
+<p-blockUI  [blocked]="blockedPanel">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <i>
+        Please Wait, System is processing your request.</i>
+</p-blockUI>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
